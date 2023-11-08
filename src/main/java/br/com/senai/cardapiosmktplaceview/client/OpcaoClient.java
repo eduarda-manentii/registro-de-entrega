@@ -1,14 +1,20 @@
 package br.com.senai.cardapiosmktplaceview.client;
 
+import java.io.File;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,6 +27,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Setter;
 
 @Component
@@ -103,6 +110,26 @@ public class OpcaoClient {
 		
 	}
 	
+	public void upload(
+			@NotNull(message = "A foto da opção é obrigatória")
+			File foto,
+			@NotNull(message = "O id da opção é obrigatório")
+			@Positive(message = "O id da opção deve positivo")
+			Integer id) {
+		
+		HttpHeaders headers = aplicador.aplicar(tokenDeAcesso);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();        
+        body.add("foto", new FileSystemResource(foto));
+
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+
+        this.httpClient.postForObject(urlDaApi + RESOURCE 
+        		+ "/id/" + id + "/upload", request, Void.class);
+		
+	}
+	
 	public Paginacao<Opcao> listarPor(
 			@NotBlank(message = "O nome deve conter mais de 3 caracteres")
 			String nome, 
@@ -110,7 +137,7 @@ public class OpcaoClient {
 			Categoria categoria,
 			@NotNull(message = "O restaurante é obrigatório")
 			Restaurante restaurante,
-			@Positive(message = "A página de registros deve ser positiva")
+			@PositiveOrZero(message = "A página de registros deve ser positiva")
 			Integer pagina){
 		
 		StringBuilder queryParams = new StringBuilder();

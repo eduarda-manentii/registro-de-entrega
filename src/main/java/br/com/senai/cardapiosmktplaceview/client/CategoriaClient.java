@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Setter;
 
 @Component
@@ -106,7 +107,7 @@ public class CategoriaClient {
 			Status status, 
 			@NotNull(message = "O tipo de categoria é obrigatório")
 			TipoDeCategoria tipo, 
-			@Positive(message = "A página de registros deve ser positiva")
+			@PositiveOrZero(message = "A página de registros deve ser positiva")
 			Integer pagina){
 		
 		StringBuilder queryParams = new StringBuilder();

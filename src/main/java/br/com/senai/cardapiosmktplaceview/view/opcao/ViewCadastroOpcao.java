@@ -8,6 +8,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,6 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,6 +67,8 @@ public class ViewCadastroOpcao extends
 	
 	private JTextField edtCategoria;
 	
+	private JButton btnUpload;
+	
 	private Opcao opcao;
 	
 	private Categoria categoriaSelecionada;
@@ -104,6 +109,7 @@ public class ViewCadastroOpcao extends
 		this.tokenDeAcesso = tokenDeAcesso;
 		this.opcaoClient.setTokenDeAcesso(tokenDeAcesso);
 		this.mostrarStatus(false);
+		this.btnUpload.setEnabled(false);
 		this.limparCampos();
 	}
 	
@@ -116,6 +122,7 @@ public class ViewCadastroOpcao extends
 		this.tokenDeAcesso = tokenDeAcesso;
 		this.opcaoClient.setTokenDeAcesso(tokenDeAcesso);
 		this.mostrarStatus(true);
+		this.btnUpload.setEnabled(true);
 		this.preencherFormularioCom(opcao);
 	}
 	
@@ -310,7 +317,7 @@ public class ViewCadastroOpcao extends
 		pnlAcoes.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), 
 								"A\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, 
 								null, new Color(51, 51, 51)));
-		pnlAcoes.setBounds(487, 361, 240, 65);
+		pnlAcoes.setBounds(371, 361, 356, 65);
 		contentPane.add(pnlAcoes);
 		
 		JButton btnSalvar = new JButton("Salvar");
@@ -319,8 +326,7 @@ public class ViewCadastroOpcao extends
 				
 				opcao.setNome(edtNome.getText());
 				opcao.setDescricao(taDescricao.getText());
-				opcao.setPromocao(getFlagDePromocaoSelecionada());
-				opcao.setStatus(getStatusSelecionado());
+				opcao.setPromocao(getFlagDePromocaoSelecionada());				
 				opcao.setRestaurante(restauranteSelecionado);
 				opcao.setCategoria(categoriaSelecionada);
 				
@@ -332,6 +338,7 @@ public class ViewCadastroOpcao extends
 				try {
 
 					if (opcao.isPersistida()) {
+						opcao.setStatus(getStatusSelecionado());
 						Opcao opcaoAtualizada = opcaoClient.atualizar(opcao);
 						preencherFormularioCom(opcaoAtualizada);
 					}else {
@@ -371,8 +378,30 @@ public class ViewCadastroOpcao extends
 				}
 			}
 		});
-		btnCancelar.setBounds(128, 27, 98, 26);
+		btnCancelar.setBounds(238, 27, 98, 26);
 		pnlAcoes.add(btnCancelar);
+		
+		btnUpload = new JButton("Foto");
+		btnUpload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+				jfc.setDialogTitle("Selecione a foto da opção");
+				jfc.setApproveButtonText("Abrir");
+				jfc.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivos de imagem (jpeg)", "jpeg", "jpg");
+				jfc.addChoosableFileFilter(filter);
+
+				int opcaoSelecionada = jfc.showOpenDialog(null);
+				if (opcaoSelecionada == JFileChooser.APPROVE_OPTION) {
+					opcaoClient.upload(jfc.getSelectedFile(), opcao.getId());
+					JOptionPane.showMessageDialog(contentPane, "Upload realizado com sucesso", 
+							"Sucesso na Upload", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		btnUpload.setBounds(128, 27, 98, 26);
+		pnlAcoes.add(btnUpload);
 		this.setLocationRelativeTo(null);
 	}
 }

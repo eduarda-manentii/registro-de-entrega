@@ -102,6 +102,7 @@ public class ViewListagemOpcao extends JFrame
 		this.receptorDeCategoria = this;
 		this.receptorDeRestaurante = this;
 		this.btnUsar.setEnabled(false);
+		this.paginaAtual = PRIMEIRA_PAGINA;
 	}
 	
 	private void configurarColuna(int indice, int largura) {

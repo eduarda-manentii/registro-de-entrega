@@ -187,12 +187,12 @@ public class ViewCadastroCategoria extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				categoria.setNome(edtNome.getText());
-				categoria.setTipo(getTipoSelecionado());
-				categoria.setStatus(getStatusSelecionado());
+				categoria.setTipo(getTipoSelecionado());				
 
 				try {
 
 					if (categoria.isPersistida()) {
+						categoria.setStatus(getStatusSelecionado());
 						Categoria categoriaAtualizada = categoriaClient.atualizar(categoria);
 						preencherFormularioCom(categoriaAtualizada);
 					}else {

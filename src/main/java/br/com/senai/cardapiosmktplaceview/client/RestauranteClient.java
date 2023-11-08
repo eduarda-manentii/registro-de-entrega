@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Setter;
 
 @Component
@@ -104,7 +105,7 @@ public class RestauranteClient {
 			String nome, 
 			@NotNull(message = "A categoria é obrigatória")
 			Categoria categoria,
-			@Positive(message = "A página de registros deve ser positiva")
+			@PositiveOrZero(message = "A página de registros deve ser positiva")
 			Integer pagina){
 		
 		StringBuilder queryParams = new StringBuilder();
