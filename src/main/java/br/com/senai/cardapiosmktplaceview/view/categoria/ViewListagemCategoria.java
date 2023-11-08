@@ -27,6 +27,8 @@ import br.com.senai.cardapiosmktplaceview.enums.Status;
 import br.com.senai.cardapiosmktplaceview.enums.TipoDeCategoria;
 import br.com.senai.cardapiosmktplaceview.view.componentes.table.CategoriaTableModel;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
 
 @Component
@@ -113,6 +115,13 @@ public class ViewListagemCategoria extends JFrame {
 			tbCategorias.setModel(model);			
 			configurarTabela();
 			btnStatus.setText(getStatusSelecionado() == Status.A ? "Inativar" : "Ativar");
+		}catch (ConstraintViolationException cve) {
+			StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+			for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+				msgErro.append("  -").append(cv.getMessage()).append("\n");
+			}
+			JOptionPane.showMessageDialog(contentPane, msgErro, 
+					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 		}catch (Exception ex) {
 			JOptionPane.showMessageDialog(contentPane, ex.getMessage(), 
 					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
@@ -284,6 +293,13 @@ public class ViewListagemCategoria extends JFrame {
 							listarCategoriasDa(paginaAtual);
 							JOptionPane.showMessageDialog(contentPane, "Categoria removida com sucesso", 
 									"Sucesso na Remoção", JOptionPane.INFORMATION_MESSAGE);
+						}catch (ConstraintViolationException cve) {
+							StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+							for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+								msgErro.append("  -").append(cv.getMessage()).append("\n");
+							}
+							JOptionPane.showMessageDialog(contentPane, msgErro, 
+									"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 						}catch (Exception ex) {
 							JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
 									"Erro na Remoção", JOptionPane.ERROR_MESSAGE);
@@ -321,6 +337,13 @@ public class ViewListagemCategoria extends JFrame {
 							listarCategoriasDa(paginaAtual);
 							JOptionPane.showMessageDialog(contentPane, "O status da categoria foi atualizado com sucesso", 
 									"Sucesso na Remoção", JOptionPane.INFORMATION_MESSAGE);
+						}catch (ConstraintViolationException cve) {
+							StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+							for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+								msgErro.append("  -").append(cv.getMessage()).append("\n");
+							}
+							JOptionPane.showMessageDialog(contentPane, msgErro, 
+									"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 						}catch (Exception ex) {
 							JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
 									"Erro na Atualização", JOptionPane.ERROR_MESSAGE);

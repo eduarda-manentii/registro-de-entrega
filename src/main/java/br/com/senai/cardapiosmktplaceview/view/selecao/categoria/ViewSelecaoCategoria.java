@@ -25,6 +25,8 @@ import br.com.senai.cardapiosmktplaceview.enums.Status;
 import br.com.senai.cardapiosmktplaceview.enums.TipoDeCategoria;
 import br.com.senai.cardapiosmktplaceview.view.componentes.table.CategoriaTableModel;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -81,7 +83,7 @@ public class ViewSelecaoCategoria extends JFrame {
 		this.tbCategorias.getTableHeader().setReorderingAllowed(false);
 		this.tbCategorias.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		this.configurarColuna(COLUNA_ID, 50);
-		this.configurarColuna(COLUNA_NOME, 420);
+		this.configurarColuna(COLUNA_NOME, 478);
 	}
 	
 	private void listarCategoriaDa(int pagina) {
@@ -90,6 +92,13 @@ public class ViewSelecaoCategoria extends JFrame {
 			CategoriaTableModel model = new CategoriaTableModel(paginacao.getListagem());
 			tbCategorias.setModel(model);			
 			configurarTabela();
+		}catch (ConstraintViolationException cve) {
+			StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+			for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+				msgErro.append("  -").append(cv.getMessage()).append("\n");
+			}
+			JOptionPane.showMessageDialog(contentPane, msgErro, 
+					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 		}catch (Exception ex) {
 			JOptionPane.showMessageDialog(contentPane, ex.getMessage(), 
 					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
@@ -203,6 +212,11 @@ public class ViewSelecaoCategoria extends JFrame {
 					CategoriaTableModel model = (CategoriaTableModel)tbCategorias.getModel();
 					Categoria categoriaSelecionada = model.getPor(linhaSelecionada);
 					receptorDaSelecao.usar(categoriaSelecionada);
+					edtNome.setText("");
+					tbCategorias.setModel(new CategoriaTableModel());
+					paginacao = null;
+					paginaAtual = PRIMEIRA_PAGINA;
+					configurarTabela();
 					dispose();
 				}else {
 					JOptionPane.showMessageDialog(contentPane, "Selecione uma categoria para seleção");

@@ -26,6 +26,8 @@ import br.com.senai.cardapiosmktplaceview.enums.TipoDeCategoria;
 import br.com.senai.cardapiosmktplaceview.view.selecao.categoria.IReceptorDeCategoriaSelecionada;
 import br.com.senai.cardapiosmktplaceview.view.selecao.categoria.ViewSelecaoCategoria;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -274,9 +276,16 @@ public class ViewCadastroRestaurante extends JFrame implements IReceptorDeCatego
 					JOptionPane.showMessageDialog(contentPane, "Restaurante salvo com sucesso", 
 							"Sucesso na Gravação", JOptionPane.INFORMATION_MESSAGE);
 
+				}catch (ConstraintViolationException cve) {
+					StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+					for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+						msgErro.append("  -").append(cv.getMessage()).append("\n");
+					}
+					JOptionPane.showMessageDialog(contentPane, msgErro, 
+							"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 				}catch (Exception ex) {
 					JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
-							"Erro na Remoção", JOptionPane.ERROR_MESSAGE);
+							"Erro na Gravação", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}

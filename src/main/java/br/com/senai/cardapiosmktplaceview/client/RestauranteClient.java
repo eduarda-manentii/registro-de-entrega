@@ -59,7 +59,7 @@ public class RestauranteClient {
 	
 	public Restaurante atualizar(
 			@Valid
-			@NotNull(message = "O restaurante salvo não p")
+			@NotNull(message = "O restaurante salvo não pode ser nulo")
 			Restaurante restauranteSalvo) {
 		
 		HttpEntity<Restaurante> request = new HttpEntity<Restaurante>(

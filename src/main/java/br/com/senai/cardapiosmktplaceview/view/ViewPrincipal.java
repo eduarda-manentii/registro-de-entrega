@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.senai.cardapiosmktplaceview.view.categoria.ViewListagemCategoria;
+import br.com.senai.cardapiosmktplaceview.view.opcao.ViewListagemOpcao;
 import br.com.senai.cardapiosmktplaceview.view.restaurante.ViewListagemRestaurante;
 import jakarta.validation.constraints.NotBlank;
 
@@ -33,6 +34,9 @@ public class ViewPrincipal extends JFrame implements Serializable{
 	
 	@Autowired
 	private ViewListagemRestaurante viewListagemRestaurante;
+	
+	@Autowired
+	private ViewListagemOpcao viewListagemOpcao;
 
 	public ViewPrincipal() {
 		setResizable(false);
@@ -59,13 +63,21 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		});
 		mnNewMenu.add(mntmNewMenuItem);
 		
-		JMenuItem opcaoRestaurante = new JMenuItem("Restaurantes");
-		opcaoRestaurante.addActionListener(new ActionListener() {
+		JMenuItem miRestaurante = new JMenuItem("Restaurantes");
+		miRestaurante.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				viewListagemRestaurante.mostrarTela(tokenDeAcesso);				
 			}
 		});
-		mnNewMenu.add(opcaoRestaurante);
+		mnNewMenu.add(miRestaurante);
+		
+		JMenuItem miOpcao = new JMenuItem("Opções");
+		miOpcao.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewListagemOpcao.mostrarTela(tokenDeAcesso);				
+			}
+		});
+		mnNewMenu.add(miOpcao);
 		
 		JMenu mnNewMenu_1 = new JMenu("Gestão");
 		menuBar.add(mnNewMenu_1);

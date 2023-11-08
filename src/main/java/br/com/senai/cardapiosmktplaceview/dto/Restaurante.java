@@ -1,7 +1,5 @@
 package br.com.senai.cardapiosmktplaceview.dto;
 
-import java.beans.Transient;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -42,13 +40,11 @@ public class Restaurante {
 		this.status = Status.A;
 		this.endereco = new Endereco();
 	}
-	
-	@Transient
+		
 	public boolean isPersistido() {
 		return getId() != null && getId() > 0;
 	}
-	
-	@Transient
+		
 	public boolean isAtivo() {
 		return getStatus() == Status.A;
 	}

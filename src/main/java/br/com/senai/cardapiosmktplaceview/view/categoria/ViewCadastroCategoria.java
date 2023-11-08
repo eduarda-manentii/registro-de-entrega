@@ -206,7 +206,7 @@ public class ViewCadastroCategoria extends JFrame {
 
 				}catch (Exception ex) {
 					JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
-							"Erro na Remoção", JOptionPane.ERROR_MESSAGE);
+							"Erro na Gravação", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}

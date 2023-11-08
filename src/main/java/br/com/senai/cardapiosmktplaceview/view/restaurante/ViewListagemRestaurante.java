@@ -30,8 +30,12 @@ import br.com.senai.cardapiosmktplaceview.enums.TipoDeCategoria;
 import br.com.senai.cardapiosmktplaceview.view.componentes.table.RestauranteTableModel;
 import br.com.senai.cardapiosmktplaceview.view.selecao.categoria.IReceptorDeCategoriaSelecionada;
 import br.com.senai.cardapiosmktplaceview.view.selecao.categoria.ViewSelecaoCategoria;
+import br.com.senai.cardapiosmktplaceview.view.selecao.restaurante.IReceptorDeRestauranteSelecionado;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 public class ViewListagemRestaurante extends JFrame implements IReceptorDeCategoriaSelecionada {
@@ -52,9 +56,19 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 	
 	private JButton btnStatus;
 	
+	private JButton btnUsar;
+	
+	private JButton btnEditar;
+	
+	private JButton btnExcluir;
+	
+	private JButton btnNovo;
+	
 	private Categoria categoriaSelecionada;
 	
-	private IReceptorDeCategoriaSelecionada receptor;
+	private IReceptorDeCategoriaSelecionada receptorDeCategoria;
+	
+	private IReceptorDeRestauranteSelecionado receptorDeRestaurante;
 	
 	private Paginacao<Restaurante> paginacao;
 	
@@ -74,7 +88,7 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 	@PostConstruct
 	private void inicializar() {	
 		this.configurarTabela();
-		this.receptor = this;
+		this.receptorDeCategoria = this;
 	}
 
 	@Override
@@ -83,12 +97,29 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		this.edtCategoria.setText(categoriaSelecionada.getId() + " - " + categoriaSelecionada.getNome());
 	}
 	
+	public void colocarEmModoDeSelecao(
+			@NotNull(message = "O receptor da seleção do restaurante não pode ser nulo")
+			IReceptorDeRestauranteSelecionado receptor,
+			@NotBlank(message = "O token de acesso é obrigatório")
+			String tokenDeAcesso) {
+		this.btnEditar.setEnabled(false);
+		this.btnExcluir.setEnabled(false);
+		this.btnStatus.setEnabled(false);
+		this.btnNovo.setEnabled(false);
+		this.btnUsar.setEnabled(true);
+		this.tokenDeAcesso = tokenDeAcesso;
+		this.restauranteClient.setTokenDeAcesso(tokenDeAcesso);
+		this.receptorDeRestaurante = receptor;
+		this.setVisible(true);
+	}
+	
 	public void mostrarTela(
 			@NotBlank(message = "O token de acesso é obrigatório")
 			String tokenDeAcesso) {
 		this.setVisible(true);
 		this.tokenDeAcesso = tokenDeAcesso;
 		this.restauranteClient.setTokenDeAcesso(tokenDeAcesso);
+		this.btnUsar.setEnabled(false);
 	}
 	
 	private void configurarColuna(int indice, int largura) {
@@ -113,6 +144,13 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 			RestauranteTableModel model = new RestauranteTableModel(paginacao.getListagem());
 			tbRestaurantes.setModel(model);			
 			configurarTabela();			
+		}catch (ConstraintViolationException cve) {
+			StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+			for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+				msgErro.append("  -").append(cv.getMessage()).append("\n");
+			}
+			JOptionPane.showMessageDialog(contentPane, msgErro, 
+					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 		}catch (Exception ex) {
 			JOptionPane.showMessageDialog(contentPane, ex.getMessage(), 
 					"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
@@ -130,7 +168,7 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnNovo = new JButton("Novo");
+		btnNovo = new JButton("Novo");
 		btnNovo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				viewCadastro.colocarEmModoDeInsercao(tokenDeAcesso);
@@ -179,7 +217,7 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		JButton btnSelecionar = new JButton("...");
 		btnSelecionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewSelecao.apresentarSelecao(receptor, TipoDeCategoria.RESTAURANTE, tokenDeAcesso);
+				viewSelecao.apresentarSelecao(receptorDeCategoria, TipoDeCategoria.RESTAURANTE, tokenDeAcesso);
 			}
 		});
 		btnSelecionar.setBounds(507, 41, 31, 26);
@@ -256,10 +294,10 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		pnlAcoes.setLayout(null);
 		pnlAcoes.setBorder(new TitledBorder(null, "A\u00E7\u00F5es do Registro Selecionado",
 						TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		pnlAcoes.setBounds(308, 467, 358, 67);
+		pnlAcoes.setBounds(209, 467, 457, 67);
 		contentPane.add(pnlAcoes);
 		
-		JButton btnEditar = new JButton("Editar");
+		btnEditar = new JButton("Editar");
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int linhaSelecionada = tbRestaurantes.getSelectedRow();
@@ -276,7 +314,7 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		btnEditar.setBounds(21, 28, 98, 26);
 		pnlAcoes.add(btnEditar);
 		
-		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir = new JButton("Excluir");
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int linhaSelecionada = tbRestaurantes.getSelectedRow();
@@ -293,6 +331,13 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 							listarRestaurantesDa(paginaAtual);
 							JOptionPane.showMessageDialog(contentPane, "Restaurante removido com sucesso", 
 									"Sucesso na Remoção", JOptionPane.INFORMATION_MESSAGE);
+						}catch (ConstraintViolationException cve) {
+							StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+							for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+								msgErro.append("  -").append(cv.getMessage()).append("\n");
+							}
+							JOptionPane.showMessageDialog(contentPane, msgErro, 
+									"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 						}catch (Exception ex) {
 							JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
 									"Erro na Remoção", JOptionPane.ERROR_MESSAGE);
@@ -332,6 +377,13 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 							btnStatus.setText(novoStatus == Status.A ? "Inativar" : "Ativar");
 							JOptionPane.showMessageDialog(contentPane, "O status do restaurante foi atualizado com sucesso", 
 									"Sucesso na Remoção", JOptionPane.INFORMATION_MESSAGE);
+						}catch (ConstraintViolationException cve) {
+							StringBuilder msgErro = new StringBuilder("Os seguintes erros ocorreram:\n");			
+							for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
+								msgErro.append("  -").append(cv.getMessage()).append("\n");
+							}
+							JOptionPane.showMessageDialog(contentPane, msgErro, 
+									"Falha na Listagem", JOptionPane.ERROR_MESSAGE);
 						}catch (Exception ex) {
 							JOptionPane.showMessageDialog(contentPane, ex.getMessage(),
 									"Erro na Atualização", JOptionPane.ERROR_MESSAGE);
@@ -347,6 +399,30 @@ public class ViewListagemRestaurante extends JFrame implements IReceptorDeCatego
 		});
 		btnStatus.setBounds(241, 28, 98, 26);
 		pnlAcoes.add(btnStatus);
+		
+		btnUsar = new JButton("Usar");
+		btnUsar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int linhaSelecionada = tbRestaurantes.getSelectedRow();
+				if (linhaSelecionada >= 0) {
+					RestauranteTableModel model = (RestauranteTableModel)tbRestaurantes.getModel();
+					Restaurante restauranteSelecionado = model.getPor(linhaSelecionada);
+					receptorDeRestaurante.usar(restauranteSelecionado);
+					edtNome.setText("");
+					categoriaSelecionada = null;
+					edtCategoria.setText("");
+					tbRestaurantes.setModel(new RestauranteTableModel());
+					paginaAtual = PRIMEIRA_PAGINA;
+					paginacao = null;
+					configurarTabela();
+					dispose();
+				}else {
+					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha para seleção");
+				}
+			}
+		});
+		btnUsar.setBounds(347, 28, 98, 26);
+		pnlAcoes.add(btnUsar);
 		this.setLocationRelativeTo(null);
 	}
 }
