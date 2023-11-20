@@ -38,9 +38,6 @@ public class ViewLogin extends JFrame implements Serializable {
 	@Autowired
 	private TransportadoraService service;
 	
-	@Autowired
-	private SessionManager sessionManager;
-	
 	public ViewLogin() {
 		setResizable(false);
 		setTitle("Acesso ao Sistema");
@@ -78,9 +75,8 @@ public class ViewLogin extends JFrame implements Serializable {
 					String senha = new String(edtSenha.getPassword());
 					Transportadora transportadoraEncontrada = service.buscarPor(login, senha);
 					if (transportadoraEncontrada != null) {
-						 sessionManager.setIdTransportadoraLogada(transportadoraEncontrada.getId());
-						 sessionManager.setNomeTransportadoraLogada(transportadoraEncontrada.getNome());
-						viewPrincipal.setVisible(true);
+						int idDaTransportadora = transportadoraEncontrada.getId();
+						viewPrincipal.mostrarTela(idDaTransportadora);
 						dispose();
 					} else {
 						JOptionPane.showMessageDialog(null, "Não existe transportadora"

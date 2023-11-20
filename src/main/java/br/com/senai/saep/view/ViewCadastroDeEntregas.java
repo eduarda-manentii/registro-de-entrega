@@ -21,7 +21,6 @@ import br.com.senai.saep.service.MotoristaService;
 public class ViewCadastroDeEntregas extends JFrame implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
 	private JFrame frame;
 	private JTextArea taDescricao;
 	JComboBox<Motorista> cbMotoristas;
@@ -30,20 +29,16 @@ public class ViewCadastroDeEntregas extends JFrame implements Serializable {
 	@Autowired
 	private MotoristaService motoristaService;
 	
-	@Autowired
- 	private final SessionManager sessionManager;
- 	
+	private int idDaTransportadora;
+	
 	public void carregarComboMotorista() {
-		Integer idTransportadora = sessionManager.getIdTransportadoraLogada();
-		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idTransportadora);
+		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idDaTransportadora);
 		for (Motorista ca : categorias) {
 			cbMotoristas.addItem(ca);
 		}
 	}
 	
-	public ViewCadastroDeEntregas(SessionManager sessionManager, MotoristaService motoristaService) {
-        this.sessionManager = sessionManager;
-        this.motoristaService = motoristaService;
+	public ViewCadastroDeEntregas() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,4 +77,9 @@ public class ViewCadastroDeEntregas extends JFrame implements Serializable {
 		this.carregarComboMotorista();
 	}
 
+	public void mostrarTela(int idDaTransportadora) {
+		this.setVisible(true);
+		this.idDaTransportadora = idDaTransportadora;
+	}
+	
 }

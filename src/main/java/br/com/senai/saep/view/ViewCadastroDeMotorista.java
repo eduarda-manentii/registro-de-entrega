@@ -39,8 +39,7 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 	@Autowired
 	private MotoristaService service;
 	
-	@Autowired
-	private SessionManager sessionManager;
+	private int idDaTransportadora;
 	
 	public ViewCadastroDeMotorista() {
 		frame = new JFrame();
@@ -81,8 +80,7 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 					Motorista motorista = new Motorista();
 					motorista.setNome_completo(nome);
 					motorista.setCnh(cnh);
-					Integer idTransportadora = sessionManager.getIdTransportadoraLogada();
-					Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idTransportadora);
+					Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idDaTransportadora);
 					motorista.setTransportadora(transportadoraEncontrada);
 
 					Motorista motoristaCadastrado = service.salvar(motorista);
@@ -106,5 +104,10 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 		contentPane.add(btnConsultar);
 		
 		this.setLocationRelativeTo(null);
+	}
+	
+	public void mostrarTela(int idDaTransportadora) {
+		this.setVisible(true);
+		this.idDaTransportadora = idDaTransportadora;
 	}
 }

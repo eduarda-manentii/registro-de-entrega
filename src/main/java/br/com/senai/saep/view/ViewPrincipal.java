@@ -22,6 +22,8 @@ public class ViewPrincipal extends JFrame implements Serializable{
 
 	private JPanel contentPane;
 	
+	private int idDaTransportadora;
+	
 	@Autowired @Lazy
 	private ViewListagemMotorista viewListagemMotorista;
 	
@@ -48,7 +50,7 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		JMenuItem mntmNewMenuItem = new JMenuItem("Motorista");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewListagemMotorista.setVisible(true);
+				viewListagemMotorista.mostrarTela(idDaTransportadora);
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem);
@@ -56,7 +58,7 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		JMenuItem miRestaurante = new JMenuItem("Entregas");
 		miRestaurante.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewListagemEntrega.setVisible(true);
+				viewListagemEntrega.mostrarTela(idDaTransportadora);
 			}
 		});
 		mnNewMenu.add(miRestaurante);
@@ -71,7 +73,8 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		this.setLocationRelativeTo(null);
 	}
 	
-	public void mostrarTela() {
+	public void mostrarTela(int idDaTransportadora) {
 		this.setVisible(true);
+		this.idDaTransportadora = idDaTransportadora;
 	}
 }

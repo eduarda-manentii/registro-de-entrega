@@ -30,8 +30,7 @@ public class ViewListagemEntregas extends JFrame {
 	JComboBox<Motorista> cbMotoristas;
 	private JTable tableEntrega;
 	
-	@Autowired
-	private SessionManager sessionManager;
+	private int idDaTransportadora;
 	
 	@Autowired
 	private MotoristaService motoristaService;
@@ -40,8 +39,7 @@ public class ViewListagemEntregas extends JFrame {
 	private ViewCadastroDeEntregas viewCadastroEntregas;
 	
 	public void carregarComboMotorista() {
-		Integer idTransportadora = sessionManager.getIdTransportadoraLogada();
-		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idTransportadora);
+		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idDaTransportadora);
 		for (Motorista ca : categorias) {
 			cbMotoristas.addItem(ca);
 		}
@@ -96,5 +94,10 @@ public class ViewListagemEntregas extends JFrame {
 		contentPane.add(scrollPane);
 		
 		this.carregarComboMotorista();
+	}
+    
+    public void mostrarTela(int idDaTransportadora) {
+		this.setVisible(true);
+		this.idDaTransportadora = idDaTransportadora;
 	}
 }

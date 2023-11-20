@@ -30,9 +30,9 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private JFrame frame;
-
 	private JTable tableMotorista;
 	private JPanel contentPane;
+	private JTextField txtFiltro;
 	
 	@Autowired @Lazy
 	private ViewCadastroDeMotorista viewCadastroMotorista;
@@ -40,11 +40,7 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 	@Autowired
 	private MotoristaService service;
 	
-	@Autowired
-	private SessionManager sessionManager;
-
-	private JTextField txtFiltro;
-	
+	private int idDaTransportadora;
 
 	public ViewListagemMotorista() {
 		MotoristaTableModel model = new MotoristaTableModel(new ArrayList<Motorista>());
@@ -52,8 +48,7 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 	    frame = new JFrame();
 	    setBounds(100, 100, 500, 300);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    Integer idTransportadora = sessionManager.getIdTransportadoraLogada();
-	    List<Motorista> motoristasEncontrados = service.buscarPorTransportadora(idTransportadora);
+	    List<Motorista> motoristasEncontrados = service.buscarPorTransportadora(idDaTransportadora);
 	    tableMotorista.setModel((TableModel) motoristasEncontrados);
 		
 		contentPane = new JPanel();
@@ -83,7 +78,7 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 			            List<Motorista> motoristasEncontrados;
 
 			            if (filtro.isEmpty()) {
-			                motoristasEncontrados = service.buscarPorTransportadora(sessionManager.getIdTransportadoraLogada());
+			                motoristasEncontrados = service.buscarPorTransportadora(idDaTransportadora);
 			            } else {
 			                motoristasEncontrados = service.listarPorNome(filtro);
 			            }
@@ -112,6 +107,11 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 		contentPane.add(lblListar);
 		
 		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnExcluir.setBounds(359, 219, 109, 32);
 		contentPane.add(btnExcluir);
 		
@@ -121,5 +121,11 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 		
 		this.setLocationRelativeTo(null);
 	}
+	
+	public void mostrarTela(int idDaTransportadora) {
+		this.setVisible(true);
+		this.idDaTransportadora = idDaTransportadora;
+	}
+	
 }
 

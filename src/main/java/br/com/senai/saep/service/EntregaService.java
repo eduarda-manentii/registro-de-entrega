@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import br.com.senai.saep.entity.Entrega;
 import br.com.senai.saep.repository.EntregasRepository;
 
+
 @Service
 public class EntregaService {
 	
