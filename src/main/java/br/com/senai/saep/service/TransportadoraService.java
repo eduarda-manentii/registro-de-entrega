@@ -20,5 +20,12 @@ public class TransportadoraService {
 				"Não foi encontrado transportadora com as credenciais informadas.");
 		return transportadoraEncontrada;
 	}
-
+	
+	public Transportadora buscarPor(Integer id) {
+		Transportadora transportadoraEncontrada = repository.buscarPor(id);
+		Preconditions.checkNotNull(transportadoraEncontrada, 
+				"Não foi encontrado transportadora com o id informado.");
+		return transportadoraEncontrada;
+	}
+	
 }

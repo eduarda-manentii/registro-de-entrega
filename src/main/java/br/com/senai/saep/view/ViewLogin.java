@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +32,14 @@ public class ViewLogin extends JFrame implements Serializable {
 	
 	private JPasswordField edtSenha;
 	
-	@Autowired
+	@Autowired @Lazy
 	private ViewPrincipal viewPrincipal;
 	
 	@Autowired
 	private TransportadoraService service;
+	
+	@Autowired
+	private SessionManager sessionManager;
 	
 	public ViewLogin() {
 		setResizable(false);
@@ -74,6 +78,8 @@ public class ViewLogin extends JFrame implements Serializable {
 					String senha = new String(edtSenha.getPassword());
 					Transportadora transportadoraEncontrada = service.buscarPor(login, senha);
 					if (transportadoraEncontrada != null) {
+						 sessionManager.setIdTransportadoraLogada(transportadoraEncontrada.getId());
+						 sessionManager.setNomeTransportadoraLogada(transportadoraEncontrada.getNome());
 						viewPrincipal.setVisible(true);
 						dispose();
 					} else {

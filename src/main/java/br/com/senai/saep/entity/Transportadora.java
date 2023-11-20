@@ -2,12 +2,8 @@ package br.com.senai.saep.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,8 +14,11 @@ import lombok.EqualsAndHashCode;
 public class Transportadora {
 	
 	@Id
-	@Column(name = "email")
+	@Column(name = "id")
 	@EqualsAndHashCode.Include
+	private Integer id;
+	
+	@Column(name = "login")
 	private String email;
 	
 	@Column(name = "nome")
@@ -28,9 +27,4 @@ public class Transportadora {
 	@Column(name = "senha")
 	private String senha;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_motorista")
-	@NotNull(message = "O motorista é obrigatório.")
-	private Motorista motorista;
-
 }

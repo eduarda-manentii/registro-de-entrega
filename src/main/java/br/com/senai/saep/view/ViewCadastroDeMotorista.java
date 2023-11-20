@@ -17,7 +17,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Motorista;
+import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.MotoristaService;
+import br.com.senai.saep.service.TransportadoraService;
 
 @Component
 public class ViewCadastroDeMotorista extends JFrame implements Serializable {
@@ -29,12 +31,16 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 	private JPanel contentPane;
 	
 	@Autowired
-	private MotoristaService service;
+	private TransportadoraService serviceTransportadora;
 	
 	@Autowired @Lazy
 	private ViewListagemMotorista view;
 	
-	private JTextField textField;
+	@Autowired
+	private MotoristaService service;
+	
+	@Autowired
+	private SessionManager sessionManager;
 	
 	public ViewCadastroDeMotorista() {
 		frame = new JFrame();
@@ -75,6 +81,10 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 					Motorista motorista = new Motorista();
 					motorista.setNome_completo(nome);
 					motorista.setCnh(cnh);
+					Integer idTransportadora = sessionManager.getIdTransportadoraLogada();
+					Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idTransportadora);
+					motorista.setTransportadora(transportadoraEncontrada);
+
 					Motorista motoristaCadastrado = service.salvar(motorista);
 					if (motoristaCadastrado != null) {
 						JOptionPane.showMessageDialog(null, "Salvo com sucesso!");

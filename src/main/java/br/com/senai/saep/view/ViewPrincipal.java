@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +22,11 @@ public class ViewPrincipal extends JFrame implements Serializable{
 
 	private JPanel contentPane;
 	
-	@Autowired
+	@Autowired @Lazy
 	private ViewListagemMotorista viewListagemMotorista;
+	
+	@Autowired @Lazy
+	private ViewListagemEntregas viewListagemEntrega;
 	
 	public ViewPrincipal() {
 		setResizable(false);
@@ -44,7 +48,7 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		JMenuItem mntmNewMenuItem = new JMenuItem("Motorista");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewListagemMotorista.setVisible(true);;
+				viewListagemMotorista.setVisible(true);
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem);
@@ -52,7 +56,7 @@ public class ViewPrincipal extends JFrame implements Serializable{
 		JMenuItem miRestaurante = new JMenuItem("Entregas");
 		miRestaurante.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//viewListagemRestaurante.mostrarTela(tokenDeAcesso);				
+				viewListagemEntrega.setVisible(true);
 			}
 		});
 		mnNewMenu.add(miRestaurante);

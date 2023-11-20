@@ -11,32 +11,34 @@ import org.springframework.context.annotation.Bean;
 
 import br.com.senai.saep.view.ViewLogin;
 
+
 @SpringBootApplication
 public class InitApp {
 	
 	@Autowired
 	private ViewLogin viewLogin;
 	
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(InitApp.class);
 		builder.headless(false);
 		builder.run(args);
 	}
 	
 	@Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {		
-		return args -> {			
-			System.out.println("subiu");
+	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+		return args -> {
 			EventQueue.invokeLater(new Runnable() {
+				@Override
 				public void run() {
-					try {						
+					try {
 						viewLogin.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
 				}
 			});
 		};
 	}
-
+	
 }
