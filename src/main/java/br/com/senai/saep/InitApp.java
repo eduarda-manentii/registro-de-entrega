@@ -15,7 +15,7 @@ import br.com.senai.saep.view.ViewLogin;
 @SpringBootApplication
 public class InitApp {
 	
-	@Autowired
+	@Autowired 
 	private ViewLogin viewLogin;
 	
 	public static void main(String[] args) {

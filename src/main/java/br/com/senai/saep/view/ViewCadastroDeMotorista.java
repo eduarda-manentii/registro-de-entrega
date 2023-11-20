@@ -96,7 +96,7 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 		JButton btnConsultar = new JButton("Consultar");
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.setVisible(true);
+				view.mostrarTela(idDaTransportadora);
 				dispose();
 			}
 		});

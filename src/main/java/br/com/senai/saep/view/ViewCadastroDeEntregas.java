@@ -11,11 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.service.MotoristaService;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 @Component
 public class ViewCadastroDeEntregas extends JFrame implements Serializable {
@@ -28,6 +31,9 @@ public class ViewCadastroDeEntregas extends JFrame implements Serializable {
 	
 	@Autowired
 	private MotoristaService motoristaService;
+	
+	@Autowired @Lazy
+	private ViewListagemEntregas viewListagemDeEntrega;
 	
 	private int idDaTransportadora;
 	
@@ -67,6 +73,11 @@ public class ViewCadastroDeEntregas extends JFrame implements Serializable {
 		contentPane.add(lblDescricao);
 		
 		JButton btnConsultar = new JButton("Consultar");
+		btnConsultar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewListagemDeEntrega.mostrarTela(idDaTransportadora);
+			}
+		});
 		btnConsultar.setBounds(306, 25, 117, 25);
 		contentPane.add(btnConsultar);
 		

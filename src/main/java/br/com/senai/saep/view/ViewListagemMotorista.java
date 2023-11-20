@@ -59,7 +59,7 @@ public class ViewListagemMotorista extends JFrame implements Serializable {
 		btnCadastrarMotorista.setBounds(158, 219, 194, 32);
 		btnCadastrarMotorista.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewCadastroMotorista.setVisible(true);
+				viewCadastroMotorista.mostrarTela(idDaTransportadora);
 				dispose();
 			}
 		});

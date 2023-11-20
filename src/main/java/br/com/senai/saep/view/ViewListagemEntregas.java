@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ public class ViewListagemEntregas extends JFrame {
 	@Autowired
 	private MotoristaService motoristaService;
 	
-	@Autowired
+	@Autowired @Lazy
 	private ViewCadastroDeEntregas viewCadastroEntregas;
 	
 	public void carregarComboMotorista() {
@@ -56,15 +57,6 @@ public class ViewListagemEntregas extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				viewCadastroEntregas.setVisible(true);
-			}
-		});
-		btnAdicionar.setBounds(301, 12, 117, 25);
-		contentPane.add(btnAdicionar);
-		
 		JButton btnPesquisar = new JButton("Pesquisar");
 		btnPesquisar.setBounds(301, 65, 117, 25);
 		contentPane.add(btnPesquisar);
@@ -82,6 +74,11 @@ public class ViewListagemEntregas extends JFrame {
 		contentPane.add(btnVisualizar);
 		
 		JButton btnCadastrar = new JButton("Cadastrar");
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewCadastroEntregas.mostrarTela(idDaTransportadora);
+			}
+		});
 		btnCadastrar.setBounds(166, 214, 117, 25);
 		contentPane.add(btnCadastrar);
 		
