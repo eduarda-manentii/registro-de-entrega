@@ -31,7 +31,8 @@ public class ViewCadastroDeEntregas extends JFrame {
 	@Autowired
 	private MotoristaService motoristaService;
 	
-	@Autowired @Lazy
+	@Lazy
+	@Autowired 
 	private ViewListagemEntregas viewListagemDeEntrega;
 	
 	private int idDaTransportadora;

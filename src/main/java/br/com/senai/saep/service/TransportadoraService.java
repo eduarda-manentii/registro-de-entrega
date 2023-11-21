@@ -2,13 +2,14 @@ package br.com.senai.saep.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.google.common.base.Preconditions;
 
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.repository.TransportadorasRepository;
 
-@Service
+@Service @Validated
 public class TransportadoraService {
 	
 	@Autowired

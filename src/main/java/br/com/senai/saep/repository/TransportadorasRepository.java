@@ -9,13 +9,13 @@ import br.com.senai.saep.entity.Transportadora;
 @Repository
 public interface TransportadorasRepository extends JpaRepository<Transportadora, Integer> {
 	
-	@Query("SELECT t "
+	@Query(value = "SELECT t "
 			+ "FROM Transportadora t "
 			+ "WHERE t.email = :email "
 			+ "AND t.senha = :senha")
 	public Transportadora buscarPor(String email, String senha);
 	
-	@Query("SELECT t "
+	@Query(value = "SELECT t "
 			+ "FROM Transportadora t "
 			+ "WHERE id = :id ")
 	public Transportadora buscarPor(Integer id);

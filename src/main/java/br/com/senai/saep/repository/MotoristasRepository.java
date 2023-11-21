@@ -11,18 +11,18 @@ import br.com.senai.saep.entity.Motorista;
 @Repository
 public interface MotoristasRepository extends JpaRepository<Motorista, Integer> {
 	
-	  @Query("SELECT m "
+	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora")
 	    List<Motorista> buscarPorTransportadora(Integer idDaTransportadora);
 	  
-	  @Query("SELECT m "
+	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora "
 	  		+ "AND m.nome_completo = :nome")
 	    List<Motorista> ListarPorNome(Integer idDaTransportadora, String nome);
 	  
-	  @Query("SELECT m "
+	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora "
 		  	+ "AND m.id = :idDoMotorista")

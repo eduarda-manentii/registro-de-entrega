@@ -9,7 +9,7 @@ import br.com.senai.saep.entity.Entrega;
 @Repository
 public interface EntregasRepository extends JpaRepository<Entrega, Integer>  {
 	
-	  @Query("SELECT m "
+	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.motorista.id = :idDoMotorista "
 	  		+ "AND m.id = :idDaEntrega")

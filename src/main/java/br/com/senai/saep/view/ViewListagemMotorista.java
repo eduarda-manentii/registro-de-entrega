@@ -33,7 +33,8 @@ public class ViewListagemMotorista extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtFiltro;
 	
-	@Autowired @Lazy
+	@Lazy
+	@Autowired 
 	private ViewCadastroDeMotorista viewCadastroMotorista;
 	
 	@Autowired
