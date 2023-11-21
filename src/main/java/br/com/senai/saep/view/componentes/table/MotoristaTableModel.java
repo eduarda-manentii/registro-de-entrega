@@ -53,7 +53,7 @@ private static final long serialVersionUID = 1L;
 		if (columnIndex == 0) {
 			return motoristas.get(rowIndex).getId();
 		}else if (columnIndex == 1) {
-			return motoristas.get(rowIndex).getNome_completo();
+			return motoristas.get(rowIndex).getNomeCompleto();
 		} else if (columnIndex == 2) {
 				return motoristas.get(rowIndex).getCnh();
 		}
@@ -63,5 +63,19 @@ private static final long serialVersionUID = 1L;
 	public Motorista getPor(int rowIndex) {
 		return motoristas.get(rowIndex);
 	}	
+	
+	public void removePor(int rowIndex) {
+		this.motoristas.remove(rowIndex);
+		fireTableDataChanged();
+	}
+	
+	public boolean isVazio() {
+		return motoristas.isEmpty();
+	}
+	
+	
+	public void limpar() {
+		this.motoristas = new ArrayList<>();
+	}
 
 }

@@ -55,7 +55,7 @@ private final int QTDE_COLUNAS = 3;
 		}else if (columnIndex == 1) {
 			return entregas.get(rowIndex).getDescricao();
 		} else if(columnIndex == 2) {
-			return entregas.get(rowIndex).getMotorista().getNome_completo();
+			return entregas.get(rowIndex).getMotorista().getNomeCompleto();
 		}
 		throw new IllegalArgumentException("Índice inválido");
 	}
@@ -63,5 +63,19 @@ private final int QTDE_COLUNAS = 3;
 	public Entrega getPor(int rowIndex) {
 		return entregas.get(rowIndex);
 	}	
+	
+	public void removePor(int rowIndex) {
+		this.entregas.remove(rowIndex);
+		fireTableDataChanged();
+	}
+	
+	public boolean isVazio() {
+		return entregas.isEmpty();
+	}
+	
+	
+	public void limpar() {
+		this.entregas = new ArrayList<>();
+	}
 
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Preconditions;
+
 import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.repository.MotoristasRepository;
 
@@ -22,13 +24,15 @@ public class MotoristaService {
 		 return (List<Motorista>) repository.buscarPorTransportadora(idDaTransportadora);
     }
 	 
-	 public List<Motorista> listarPorNome(String nome) {
-		 return (List<Motorista>) repository.ListarrPorNome("%" + nome + "%");
+	 public List<Motorista> listarPorNome(Integer idDaTransportadora, String nome) {
+		 return (List<Motorista>) repository.ListarPorNome(idDaTransportadora, "%" + nome + "%");
     }
 	 
-    @Autowired
-    public MotoristaService(MotoristasRepository repository) {
-        this.repository = repository;
-    }
-
+	public void excluirPor(Integer idDaTransportadora, Integer idDoMotorista) {
+		Motorista motoristaEncontrado = repository.buscarPor(idDaTransportadora, idDoMotorista);
+		Preconditions.checkNotNull(motoristaEncontrado, 
+				"Não foi encontrado motorista com o id informado.");
+	    repository.deleteById(idDoMotorista);
+	}
+	 
 }

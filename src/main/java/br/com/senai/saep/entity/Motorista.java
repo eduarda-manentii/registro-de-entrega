@@ -27,7 +27,7 @@ public class Motorista {
 	private Integer id;
 	
 	@Column(name = "nome_completo")
-	private String nome_completo;
+	private String nomeCompleto;
 	
 	@Column(name = "cnh")
 	@ToString.Exclude

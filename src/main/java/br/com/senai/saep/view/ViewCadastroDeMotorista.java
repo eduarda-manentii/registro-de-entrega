@@ -2,7 +2,6 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,7 +21,7 @@ import br.com.senai.saep.service.MotoristaService;
 import br.com.senai.saep.service.TransportadoraService;
 
 @Component
-public class ViewCadastroDeMotorista extends JFrame implements Serializable {
+public class ViewCadastroDeMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JFrame frame;
@@ -40,6 +39,8 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 	private MotoristaService service;
 	
 	private int idDaTransportadora;
+	
+    private boolean modoVisualizacao = false;
 	
 	public ViewCadastroDeMotorista() {
 		frame = new JFrame();
@@ -74,18 +75,20 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 				String nome = txtNome.getText();
 				String cnh = txtCnh.getText();
 				
-				if (nome == null || cnh == null) {
-					JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
-				} else {
-					Motorista motorista = new Motorista();
-					motorista.setNome_completo(nome);
-					motorista.setCnh(cnh);
-					Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idDaTransportadora);
-					motorista.setTransportadora(transportadoraEncontrada);
-
-					Motorista motoristaCadastrado = service.salvar(motorista);
-					if (motoristaCadastrado != null) {
-						JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+				if(!modoVisualizacao) {
+					if (nome == null || cnh == null) {
+						JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
+					} else {
+						Motorista motorista = new Motorista();
+						motorista.setNomeCompleto(nome);
+						motorista.setCnh(cnh);
+						Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idDaTransportadora);
+						motorista.setTransportadora(transportadoraEncontrada);
+						
+						Motorista motoristaCadastrado = service.salvar(motorista);
+						if (motoristaCadastrado != null) {
+							JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+						}
 					}
 				}
 			}
@@ -110,4 +113,11 @@ public class ViewCadastroDeMotorista extends JFrame implements Serializable {
 		this.setVisible(true);
 		this.idDaTransportadora = idDaTransportadora;
 	}
+	
+	public void setMotorista(Motorista motorista) {
+		this.txtNome.setText(motorista.getNomeCompleto());
+		this.txtCnh.setText(motorista.getCnh());
+	}
+	
+	
 }

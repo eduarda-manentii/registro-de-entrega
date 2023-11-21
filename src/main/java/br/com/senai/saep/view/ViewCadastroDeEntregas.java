@@ -1,6 +1,7 @@
 package br.com.senai.saep.view;
 
-import java.io.Serializable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -17,11 +18,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.service.MotoristaService;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 @Component
-public class ViewCadastroDeEntregas extends JFrame implements Serializable {
+public class ViewCadastroDeEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JFrame frame;
