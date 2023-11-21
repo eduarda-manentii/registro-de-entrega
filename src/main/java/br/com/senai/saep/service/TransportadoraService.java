@@ -8,25 +8,23 @@ import com.google.common.base.Preconditions;
 
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.repository.TransportadorasRepository;
+import jakarta.validation.constraints.NotBlank;
 
-@Service @Validated
+@Validated
+@Service
 public class TransportadoraService {
-	
+
 	@Autowired
 	private TransportadorasRepository repository;
 	
-	public Transportadora buscarPor(String email, String senha) {
-		Transportadora transportadoraEncontrada = repository.buscarPor(email, senha);
-		Preconditions.checkNotNull(transportadoraEncontrada, 
-				"Não foi encontrado transportadora com as credenciais informadas.");
-		return transportadoraEncontrada;
-	}
-	
-	public Transportadora buscarPor(Integer id) {
-		Transportadora transportadoraEncontrada = repository.buscarPor(id);
-		Preconditions.checkNotNull(transportadoraEncontrada, 
-				"Não foi encontrado transportadora com o id informado.");
-		return transportadoraEncontrada;
+	public Transportadora logarPor(
+			@NotBlank(message = "O e-mail é obrigatório")
+			String email,
+			@NotBlank(message = "A senha é obrigatória")
+			String senha) {
+		Transportadora transportadora = repository.buscarPor(email, senha);
+		Preconditions.checkNotNull(transportadora, "Login e/ou senha inválidos");
+		return transportadora;
 	}
 	
 }

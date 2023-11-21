@@ -9,15 +9,20 @@ import org.springframework.validation.annotation.Validated;
 import com.google.common.base.Preconditions;
 
 import br.com.senai.saep.entity.Motorista;
+import br.com.senai.saep.repository.EntregasRepository;
 import br.com.senai.saep.repository.MotoristasRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-@Service @Validated
+@Validated
+@Service
 public class MotoristaService {
-	
+
 	@Autowired
 	private MotoristasRepository repository;
+	
+	@Autowired
+	private EntregasRepository entregasRepository;
 	
 	public Motorista salvar(
 			@Valid
@@ -26,22 +31,16 @@ public class MotoristaService {
 		return repository.save(motorista);
 	}
 	
-	 public List<Motorista> buscarPorTransportadora(Integer idDaTransportadora) {
-		 return (List<Motorista>) repository.buscarPorTransportadora(idDaTransportadora);
-    }
-	 
-	 public List<Motorista> listarPorNome(Integer idDaTransportadora, String nome) {
-		 return (List<Motorista>) repository.ListarPorNome(idDaTransportadora, "%" + nome + "%");
-    }
-	 
-	public void excluirPor(	@NotNull(message = "O id da transportadora é obrigatório")
-			Integer idDaTransportadora,
-			@NotNull(message = "O id do motorista é obrigatória")
-			Integer idDoMotorista) {
-		Motorista motoristaEncontrado = repository.buscarPor(idDaTransportadora, idDoMotorista);
-		Preconditions.checkNotNull(motoristaEncontrado, 
-				"Não foi encontrado motorista com o id informado.");
-	    repository.deleteById(idDoMotorista);
+	public void excluir(
+			@NotNull(message = "O motorista é obrigatório")
+			Motorista motorista) {
+		Preconditions.checkArgument(entregasRepository.contarPor(motorista.getId()) == 0, 
+				"O motorista não pode ser excluido pois já possui entregas realizadas");
+		this.repository.deleteById(motorista.getId());
 	}
-	 
+	
+	public List<Motorista> listarTodos(){
+		return repository.listarTodos();
+	}
+	
 }

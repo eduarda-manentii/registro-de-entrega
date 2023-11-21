@@ -9,34 +9,37 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@Data @ToString
-@Table(name = "motoristas")
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "motoristas")
 @Entity(name = "Motorista")
+@ToString
 public class Motorista {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-	@ToString.Exclude
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
+	@EqualsAndHashCode.Include
 	private Integer id;
 	
-	@Column(name = "nome_completo")
-	private String nomeCompleto;
+	@NotBlank(message = "O nome do motorista é obrigatório")
+	@Column(name = "nomeCompleto")
+	private String nome;
 	
+	@NotBlank(message = "A CNH do motorista é obrigatória")
 	@Column(name = "cnh")
-	@ToString.Exclude
 	private String cnh;
 	
+	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_transportadora")
-	@NotNull(message = "A transportadora é obrigatória.")
-	@ToString.Exclude
+	@NotNull(message = "A transportadora é obrigatória")
 	private Transportadora transportadora;
-	
+
 }

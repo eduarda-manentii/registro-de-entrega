@@ -2,7 +2,6 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,92 +10,76 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.TransportadoraService;
 
 @Component
-public class ViewLogin extends JFrame implements Serializable {
+public class ViewLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
 	
-	private JTextField edtLogin;
-	
-	private JPasswordField edtSenha;
-	
-	@Autowired @Lazy
-	private ViewPrincipal viewPrincipal;
-	
 	@Autowired
 	private TransportadoraService service;
+	private JTextField edtLogin;
+	private JPasswordField edtSenha;
 	
+	@Lazy
+	@Autowired
+	private ViewPrincipal viewPrincipal;
+
 	public ViewLogin() {
+		setTitle("Login");
 		setResizable(false);
-		setTitle("Acesso ao Sistema");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 288, 221);
+		setBounds(100, 100, 294, 183);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Email");
-		lblNewLabel.setBounds(10, 21, 46, 14);
+		JLabel lblNewLabel = new JLabel("Login");
+		lblNewLabel.setBounds(10, 11, 46, 14);
 		contentPane.add(lblNewLabel);
 		
 		edtLogin = new JTextField();
-		edtLogin.setHorizontalAlignment(SwingConstants.CENTER);
-		edtLogin.setBounds(10, 46, 250, 20);
+		edtLogin.setBounds(10, 28, 258, 20);
 		contentPane.add(edtLogin);
 		edtLogin.setColumns(10);
 		
-		JLabel lblNewLabel_1 = new JLabel("Senha");
-		lblNewLabel_1.setBounds(10, 77, 55, 16);
-		contentPane.add(lblNewLabel_1);
+		JLabel lblSenha = new JLabel("Senha");
+		lblSenha.setBounds(10, 59, 46, 14);
+		contentPane.add(lblSenha);
 		
 		edtSenha = new JPasswordField();
-		edtSenha.setHorizontalAlignment(SwingConstants.CENTER);
-		edtSenha.setBounds(10, 104, 250, 20);
+		edtSenha.setBounds(10, 75, 258, 20);
 		contentPane.add(edtSenha);
 		
-		JButton btnLogin = new JButton("Logar");
-		btnLogin.addActionListener(new ActionListener() {
+		JButton btnLogar = new JButton("Logar");
+		btnLogar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String login = edtLogin.getText();
-					String senha = new String(edtSenha.getPassword());
-					Transportadora transportadoraEncontrada = service.buscarPor(login, senha);
-					if (transportadoraEncontrada != null) {
-						int idDaTransportadora = transportadoraEncontrada.getId();
-						viewPrincipal.mostrarTela(idDaTransportadora);
-						dispose();
-					} else {
-						JOptionPane.showMessageDialog(null, "Não existe transportadora"
-								+ " com as credenciais informadas.");
-					}
+					Transportadora transportadora = service.logarPor(
+							edtLogin.getText(), new String(edtSenha.getPassword()));
+					edtLogin.setText("");
+					edtSenha.setText("");
+					viewPrincipal.apresentarTela(transportadora);
+					dispose();
 				}catch (Exception ex) {
-					JOptionPane.showMessageDialog(contentPane, ex.getMessage(), 
-							"Falha no Login", JOptionPane.ERROR_MESSAGE);
-					limparCampos();
+					JOptionPane.showMessageDialog(contentPane, ex.getMessage());
 				}
+			
 			}
 		});
-		btnLogin.setBounds(10, 144, 250, 26);
-		contentPane.add(btnLogin);
-		this.setLocationRelativeTo(null);
+		btnLogar.setBounds(92, 106, 89, 23);
+		contentPane.add(btnLogar);
+		setLocationRelativeTo(null);
 	}
-	
-	private void limparCampos() {
-		this.edtLogin.setText("");
-		this.edtSenha.setText("");
-		this.edtLogin.requestFocus();
-	}
-}
+}	
