@@ -2,124 +2,122 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
+
 import br.com.senai.saep.entity.Motorista;
+import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.MotoristaService;
 import br.com.senai.saep.view.componentes.table.MotoristaTableModel;
 
 @Component
+@Lazy
 public class ViewListagemMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JFrame frame;
-	private JTable tableMotorista;
-	private JPanel contentPane;
-	private JTextField txtFiltro;
+	private JPanel contentPane;	
+
+	private  String nomeTransportadora; 	
 	
-	@Lazy
-	@Autowired 
+	@Autowired
 	private ViewCadastroDeMotorista viewCadastroMotorista;
 	
 	@Autowired
-	private MotoristaService service;
+	private Transportadora transportadora;	
+
+	@Autowired
+	private ViewLogin viewLogin;
 	
-	private int idDaTransportadora;
+	private JTable tabelaMotoristas;
+    private MotoristaTableModel modeloTabela;
+    
+    @Autowired
+    private MotoristaService motoristaService;
+    
+	public void pegarTransportadora(Transportadora transportadora) {
+		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+		this.nomeTransportadora = transportadora.getNome().toUpperCase();
+		this.transportadora = transportadora;
+		setTitle(nomeTransportadora);		
+		setVisible(true);
+		atualizarTabela();
+	}
 
-	public ViewListagemMotorista() {
-		MotoristaTableModel model = new MotoristaTableModel(new ArrayList<Motorista>());
-	    this.tableMotorista = new JTable(model);
-	    frame = new JFrame();
-	    setBounds(100, 100, 500, 300);
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    List<Motorista> motoristasEncontrados = service.buscarPorTransportadora(idDaTransportadora);
-	    tableMotorista.setModel((TableModel) motoristasEncontrados);
-		
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		
-		JButton btnCadastrarMotorista = new JButton("Cadastrar Motorista");
-		btnCadastrarMotorista.setBounds(158, 219, 194, 32);
-		btnCadastrarMotorista.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				viewCadastroMotorista.mostrarTela(idDaTransportadora);
-				dispose();
-			}
-		});
-		contentPane.setLayout(null);
-		contentPane.add(btnCadastrarMotorista);
-		
-		JScrollPane scrollPane = new JScrollPane(tableMotorista);
-		scrollPane.setBounds(20, 97, 465, 110);
-		contentPane.add(scrollPane);
-		
-		JButton btnPesquisar = new JButton("Listar");
-		btnPesquisar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				  try {
-			            String filtro = txtFiltro.getText();
-			            List<Motorista> motoristasEncontrados;
+    public ViewListagemMotorista() {
+        setResizable(false);
 
-			            if (filtro.isEmpty()) {
-			                motoristasEncontrados = service.buscarPorTransportadora(idDaTransportadora);
-			            } else {
-			                motoristasEncontrados = service.listarPorNome(idDaTransportadora, filtro);
-			            }
-			            MotoristaTableModel model = new MotoristaTableModel(motoristasEncontrados);
-			            tableMotorista.setModel(model);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 570, 300);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-			            if (motoristasEncontrados.isEmpty()) {
-			                JOptionPane.showMessageDialog(contentPane, "Não foi encontrado nenhum motorista com esse nome.");
-			            }
-			        } catch (Exception ex) {
-			            JOptionPane.showMessageDialog(contentPane, ex.getMessage());
-			        }
-				
-			}
-		});
-		btnPesquisar.setBounds(341, 43, 127, 32);
-		contentPane.add(btnPesquisar);
-		
-		txtFiltro = new JTextField();
-		txtFiltro.setBounds(20, 43, 299, 32);
-		contentPane.add(txtFiltro);
-		txtFiltro.setColumns(10);
-		
-		JLabel lblListar = new JLabel("Listar por nome");
-		lblListar.setBounds(20, 29, 188, 15);
-		contentPane.add(lblListar);
-		
-		JButton btnExcluir = new JButton("Excluir");
-		btnExcluir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int linhaSelecionada = tableMotorista.getSelectedRow();
-				MotoristaTableModel model = (MotoristaTableModel) tableMotorista.getModel();
+        setContentPane(contentPane);
+
+        modeloTabela = new MotoristaTableModel();
+        tabelaMotoristas = new JTable(modeloTabela);
+        JScrollPane scrollPane = new JScrollPane(tabelaMotoristas);
+        scrollPane.setBounds(10, 32, 414, 180);
+        contentPane.add(scrollPane);
+
+        JButton btnCadastrarMotorista = new JButton("Cadastrar Motorista");
+        btnCadastrarMotorista.setBounds(10, 227, 157, 23);
+        btnCadastrarMotorista.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewCadastroMotorista.pegarTransportadora(transportadora);
+                viewCadastroMotorista.setVisible(true);
+                dispose();
+            }
+        });
+        contentPane.setLayout(null);
+        setLocationRelativeTo(null);
+        contentPane.add(btnCadastrarMotorista);
+
+        JButton btnSair = new JButton("Logout");
+        btnSair.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewLogin.setVisible(true);
+                dispose();
+            }
+        });
+        btnSair.setBounds(430, 0, 89, 23);
+        contentPane.add(btnSair);
+        
+        JButton btnVisualizar = new JButton("Visualizar");
+        btnVisualizar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		JOptionPane.showMessageDialog(contentPane, "Funcionalidade não específicada.");
+        	}
+        });
+        btnVisualizar.setBounds(170, 227, 111, 23);
+        contentPane.add(btnVisualizar);
+        
+        JButton btnExcluir = new JButton("Excluir");
+        btnExcluir.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int linhaSelecionada = tabelaMotoristas.getSelectedRow();
+				MotoristaTableModel model = (MotoristaTableModel) tabelaMotoristas.getModel();
 				if(linhaSelecionada >= 0 && !model.isVazio()) {
 					int opcao = JOptionPane.showConfirmDialog(contentPane, "Deseja excluir o motorista?",
 							"Remoção", JOptionPane.YES_NO_OPTION);
 					if(opcao == 0) {
 						Motorista motoristaSelecionado = model.getPor(linhaSelecionada);
 						try {
-							service.excluirPor(idDaTransportadora, motoristaSelecionado.getId());
+							motoristaService.excluirPor(motoristaSelecionado.getId(), transportadora.getId());
 							model.removePor(linhaSelecionada);
-							JOptionPane.showMessageDialog(contentPane, "Motorista excluido.");
+							JOptionPane.showMessageDialog(contentPane, "Restaurante excluido.");
 						} catch (Exception ex) {
 							JOptionPane.showMessageDialog(contentPane, ex.getMessage());
 						}
@@ -127,40 +125,22 @@ public class ViewListagemMotorista extends JFrame {
 				} else {
 					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha para remoção.");
 				}
-				
-			}
-		});
-		btnExcluir.setBounds(359, 219, 109, 32);
-		contentPane.add(btnExcluir);
-		
-		JButton btnVisualizar = new JButton("Visualizar");
-		btnVisualizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//nao consegui implementar isso, nunca tinha feito e nao pude testar
-				//por causa do erro do spring, entao nao sei dizer se funciona
-				int linhaSelecionada = tableMotorista.getSelectedRow();
-				if(linhaSelecionada >= 0) {
-					MotoristaTableModel model = (MotoristaTableModel) tableMotorista.getModel();
-					Motorista motoristaSelecionado = model.getPor(linhaSelecionada);
-					viewCadastroMotorista.setMotorista(motoristaSelecionado);
-					viewCadastroMotorista.setVisible(true);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha para visualização.");
-				}
-			}
-		});
-		btnVisualizar.setBounds(46, 219, 109, 32);
-		contentPane.add(btnVisualizar);
-		
-		this.setLocationRelativeTo(null);
-	}
-	
-	public void mostrarTela(int idDaTransportadora) {
-		this.setVisible(true);
-		this.idDaTransportadora = idDaTransportadora;
-	}
-	
-	
+        	}
+        });
+        btnExcluir.setBounds(284, 227, 117, 23);
+        contentPane.add(btnExcluir);
+    }
+
+    private void atualizarTabela() {
+        modeloTabela = new MotoristaTableModel(obterDadosFicticios());
+        tabelaMotoristas.setModel(modeloTabela);
+    }
+
+    private List<Motorista> obterDadosFicticios() {
+        List<Motorista> motoristas = motoristaService.listarPor(transportadora.getId());        
+
+        return motoristas;
+    }
+    
 }
 

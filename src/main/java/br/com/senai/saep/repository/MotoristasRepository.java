@@ -14,13 +14,13 @@ public interface MotoristasRepository extends JpaRepository<Motorista, Integer> 
 	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora")
-	    List<Motorista> buscarPorTransportadora(Integer idDaTransportadora);
+	    List<Motorista> listarPor(Integer idDaTransportadora);
 	  
 	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora "
-	  		+ "AND m.nome_completo = :nome")
-	    List<Motorista> ListarPorNome(Integer idDaTransportadora, String nome);
+	  		+ "AND m.nomeCompleto = :nomeCompleto")
+	    List<Motorista> ListarPorNome(Integer idDaTransportadora, String nomeCompleto);
 	  
 	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "

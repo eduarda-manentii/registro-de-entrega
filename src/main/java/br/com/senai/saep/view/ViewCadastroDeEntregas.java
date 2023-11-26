@@ -8,89 +8,144 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
+
+import br.com.senai.saep.entity.Entrega;
 import br.com.senai.saep.entity.Motorista;
-import br.com.senai.saep.service.MotoristaService;
+import br.com.senai.saep.entity.Transportadora;
+import br.com.senai.saep.service.EntregaService;
+import jakarta.annotation.PostConstruct;
+
 
 @Component
+@Lazy
 public class ViewCadastroDeEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JFrame frame;
-	private JTextArea taDescricao;
-	JComboBox<Motorista> cbMotoristas;
 	private JPanel contentPane;
+	private JTextField edtDescricao;
+	private JComboBox<Motorista> cbMotoristas;
+	private  String nomeTransportadora; 	
+		
+	@Autowired
+	private EntregaService entregaService;
 	
 	@Autowired
-	private MotoristaService motoristaService;
+	private ViewLogin viewLogin;	
 	
-	@Lazy
-	@Autowired 
-	private ViewListagemEntregas viewListagemDeEntrega;
+	private List<Motorista> motoristas;
 	
-	private int idDaTransportadora;
+	public void pegarTransportadora(Transportadora transportadora, List<Motorista> motoristas) {
+		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+		this.nomeTransportadora = transportadora.getNome().toUpperCase();
+		this.motoristas = motoristas;
+		this.carregarCombo();
+		setTitle(nomeTransportadora);	
+		this.setVisible(true);
+	}	
 	
-	public void carregarComboMotorista() {
-		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idDaTransportadora);
-		for (Motorista ca : categorias) {
-			cbMotoristas.addItem(ca);
+	@PostConstruct
+	public void carregarCombo() {
+		
+		if (motoristas != null) {
+			
+			for (Motorista motorista : motoristas) {
+				cbMotoristas.addItem(motorista);
+			}
 		}
 	}
 	
+	public void limparCombo() {
+	    cbMotoristas.removeAllItems();
+	}
+	
 	public ViewCadastroDeEntregas() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		setResizable(false);		
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
 		
+		JLabel txtMotoristas = new JLabel("Motoristas");
+		txtMotoristas.setBounds(10, 62, 68, 14);
+		contentPane.add(txtMotoristas);
+		
 		cbMotoristas = new JComboBox<Motorista>();
-		cbMotoristas.setBounds(36, 62, 333, 32);
+
+		cbMotoristas.setBounds(78, 58, 277, 22);
 		contentPane.add(cbMotoristas);
 		
-		JLabel lblEntregador = new JLabel("Entregador");
-		lblEntregador.setBounds(36, 40, 129, 15);
-		contentPane.add(lblEntregador);
+		edtDescricao = new JTextField();
+		edtDescricao.setBounds(78, 132, 277, 20);
+		contentPane.add(edtDescricao);
+		edtDescricao.setColumns(10);
 		
-		taDescricao = new JTextArea();
-		taDescricao.setBounds(36, 133, 333, 81);
-		taDescricao.setColumns(10);
-		contentPane.add(taDescricao);
+		JLabel txtDescricao = new JLabel("Descrição");
+		txtDescricao.setBounds(10, 135, 59, 14);
+		contentPane.add(txtDescricao);
 		
-		JLabel lblDescricao = new JLabel("Descricao");
-		lblDescricao.setBounds(36, 116, 70, 15);
-		contentPane.add(lblDescricao);
-		
-		JButton btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
+		JButton btnInserir = new JButton("Inserir");
+		btnInserir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewListagemDeEntrega.mostrarTela(idDaTransportadora);
+				
+				try {
+					
+					Motorista motorista = (Motorista) cbMotoristas.getSelectedItem();
+					String descricao = edtDescricao.getText();
+					
+					Entrega entrega = new Entrega();
+					
+					if (entrega != null) {
+						entrega.setDescricao(descricao);
+						entrega.setMotorista(motorista);
+						
+						entregaService.salvar(entrega);
+						
+						JOptionPane.showInternalMessageDialog(null, "Entrega salva com sucesso!");
+						edtDescricao.setText("");
+						
+					}					
+					
+				} catch (Exception e2) {
+					JOptionPane.showInternalMessageDialog(null, "Erro ao tentar salvar a Entrega");
+				}
+				
 			}
 		});
-		btnConsultar.setBounds(306, 25, 117, 25);
-		contentPane.add(btnConsultar);
+		btnInserir.setBounds(172, 170, 89, 23);
+		contentPane.add(btnInserir);
 		
-		JButton btnSalvar = new JButton("Salvar");
-		btnSalvar.setBounds(149, 226, 117, 25);
-		contentPane.add(btnSalvar);
+		JButton btnSair = new JButton("Logout");
+		btnSair.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewLogin.setVisible(true);
+				limparCombo();
+				dispose();
+			}
+		});
+		btnSair.setBounds(345, 0, 89, 23);
+		contentPane.add(btnSair);
 		
-		this.carregarComboMotorista();
-	}
-
-	public void mostrarTela(int idDaTransportadora) {
-		this.setVisible(true);
-		this.idDaTransportadora = idDaTransportadora;
+		JButton btnListar = new JButton("Listar");
+		btnListar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnListar.setBounds(335, 227, 89, 23);
+		contentPane.add(btnListar);
 	}
 	
 }

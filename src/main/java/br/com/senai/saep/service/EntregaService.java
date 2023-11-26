@@ -1,5 +1,7 @@
 package br.com.senai.saep.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +36,12 @@ public class EntregaService {
 		Preconditions.checkNotNull(entregaEncontrada, 
 				"Não foi encontrada entrega com o id informado.");
 	    repository.deleteById(idDaEntrega);
+	}
+	
+	public List<Entrega> listarPor(
+			@NotNull(message = "O id da transportadora é obrigatório para listar o motorista") 
+				Integer id){
+		return repository.listarPor(id);
 	}
 
 }

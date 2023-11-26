@@ -1,5 +1,7 @@
 package br.com.senai.saep.entity;
 
+import org.springframework.stereotype.Component;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,6 +20,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "entregas")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "Entrega")
+@Component
 public class Entrega {
 
 	@Id

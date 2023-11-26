@@ -2,7 +2,6 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,15 +13,17 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.TransportadoraService;
+import org.springframework.context.annotation.Lazy;
+
 
 @Component
-public class ViewLogin extends JFrame implements Serializable {
+@Lazy
+public class ViewLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -32,7 +33,7 @@ public class ViewLogin extends JFrame implements Serializable {
 	
 	private JPasswordField edtSenha;
 	
-	@Autowired @Lazy
+	@Autowired
 	private ViewPrincipal viewPrincipal;
 	
 	@Autowired
@@ -75,8 +76,7 @@ public class ViewLogin extends JFrame implements Serializable {
 					String senha = new String(edtSenha.getPassword());
 					Transportadora transportadoraEncontrada = service.buscarPor(login, senha);
 					if (transportadoraEncontrada != null) {
-						int idDaTransportadora = transportadoraEncontrada.getId();
-						viewPrincipal.mostrarTela(idDaTransportadora);
+						viewPrincipal.pegarTransportadora(transportadoraEncontrada);
 						dispose();
 					} else {
 						JOptionPane.showMessageDialog(null, "Não existe transportadora"

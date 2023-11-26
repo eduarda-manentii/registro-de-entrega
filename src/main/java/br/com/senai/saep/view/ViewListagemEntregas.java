@@ -2,140 +2,131 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Preconditions;
 
 import br.com.senai.saep.entity.Entrega;
 import br.com.senai.saep.entity.Motorista;
+import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.EntregaService;
-import br.com.senai.saep.service.MotoristaService;
 import br.com.senai.saep.view.componentes.table.EntregaTableModel;
 
 @Component
+@Lazy
 public class ViewListagemEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	JComboBox<Motorista> cbMotoristas;
-	private JTable tableEntrega;
-	
-	private int idDaTransportadora;
-	
-	@Autowired
-	private MotoristaService motoristaService;
-	
-	@Lazy
-	@Autowired 
-	private ViewCadastroDeEntregas viewCadastroEntregas;
-	
-	@Autowired
-	private EntregaService service;
-	
-	public void carregarComboMotorista() {
-		List<Motorista> categorias = motoristaService.buscarPorTransportadora(idDaTransportadora);
-		for (Motorista ca : categorias) {
-			cbMotoristas.addItem(ca);
-		}
-	}
 
-    public ViewListagemEntregas() {
-		EntregaTableModel model = new EntregaTableModel(new ArrayList<Entrega>());
-	    this.tableEntrega = new JTable(model);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	private  String nomeTransportadora; 	
+	
+	@Autowired @Lazy
+	private ViewCadastroDeEntregas viewCadastroEntregas;
+		
+	@Autowired
+	private Transportadora transportadora;
+	
+	@Autowired
+	private ViewLogin viewLogin;
+	
+	@Autowired
+    private EntregaService entregaService;
+	
+	private List<Motorista> motoristas;
+	
+	private JTable tableEntrega;
+	private EntregaTableModel entregaTableModel;
+	private JTextField edtIdMotorista;
+	
+	public void pegarTransportadora(Transportadora transportadora, List<Motorista> motoristas) {
+		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+		this.nomeTransportadora = transportadora.getNome().toUpperCase();
+		this.transportadora = transportadora;
+		this.motoristas = motoristas;
+		setTitle(nomeTransportadora);
+		this.setVisible(true);
+	}
+	
+	public ViewListagemEntregas() {
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
-		JButton btnPesquisar = new JButton("Listar");
-		btnPesquisar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
-		btnPesquisar.setBounds(301, 65, 117, 25);
-		contentPane.add(btnPesquisar);
-		
-		cbMotoristas = new JComboBox<Motorista>();
-		cbMotoristas.setBounds(25, 61, 267, 32);
-		contentPane.add(cbMotoristas);
-		
-		JLabel lblEntregador = new JLabel("Entregador");
-		lblEntregador.setBounds(25, 38, 158, 15);
-		contentPane.add(lblEntregador);
-		
-		JButton btnVisualizar = new JButton("Visualizar");
-		btnVisualizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
-		btnVisualizar.setBounds(37, 214, 117, 25);
-		contentPane.add(btnVisualizar);
-		
-		JButton btnCadastrar = new JButton("Cadastrar");
-		btnCadastrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				viewCadastroEntregas.mostrarTela(idDaTransportadora);
-			}
-		});
-		btnCadastrar.setBounds(166, 214, 117, 25);
-		contentPane.add(btnCadastrar);
-		
-		JButton btnExcluir = new JButton("Excluir");
-		btnExcluir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int linhaSelecionada = tableEntrega.getSelectedRow();
-				EntregaTableModel model = (EntregaTableModel) tableEntrega.getModel();
-				if(linhaSelecionada >= 0 && !model.isVazio()) {
-					int opcao = JOptionPane.showConfirmDialog(contentPane, "Deseja excluir a entrega?",
-							"Remoção", JOptionPane.YES_NO_OPTION);
-					if(opcao == 0) {
-						Entrega entregaSelecionada = model.getPor(linhaSelecionada);
-						try {
-							service.excluirPor(idDaTransportadora, entregaSelecionada.getId());
-							model.removePor(linhaSelecionada);
-							JOptionPane.showMessageDialog(contentPane, "Entrega excluida.");
-						} catch (Exception ex) {
-							JOptionPane.showMessageDialog(contentPane, ex.getMessage());
-						}
-					}
-				} else {
-					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha para remoção.");
-				}
-				
-				
-			}
-		});
-		btnExcluir.setBounds(295, 214, 117, 25);
-		contentPane.add(btnExcluir);
-		
+		entregaTableModel = new EntregaTableModel();
+		tableEntrega = new JTable(entregaTableModel);
 		JScrollPane scrollPane = new JScrollPane(tableEntrega);
-		scrollPane.setBounds(27, 112, 391, 90);
+		scrollPane.setBounds(10, 43, 330, 165);
 		contentPane.add(scrollPane);
 		
-		this.carregarComboMotorista();
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		setLocationRelativeTo(null);
+		System.out.println("os motoristas chegaram aqui? " + motoristas);
+		JButton btnCadastroEntregas = new JButton("Cadastrar Entregas");
+		btnCadastroEntregas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				viewCadastroEntregas.pegarTransportadora(transportadora, motoristas);
+				dispose();
+			}
+		});
+		btnCadastroEntregas.setBounds(10, 227, 168, 23);
+		contentPane.add(btnCadastroEntregas);
+		
+		JButton btnSair = new JButton("Logout");
+		btnSair.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewLogin.setVisible(true);
+				dispose();
+			}
+		});
+		btnSair.setBounds(345, 0, 89, 23);
+		contentPane.add(btnSair);		
+		
+		JLabel lblNewLabel = new JLabel("Id motorista: ");
+		lblNewLabel.setBounds(10, 18, 76, 14);
+		contentPane.add(lblNewLabel);
+		
+		edtIdMotorista = new JTextField();
+		edtIdMotorista.setBounds(96, 15, 86, 20);
+		contentPane.add(edtIdMotorista);
+		edtIdMotorista.setColumns(10);
+		
+		JButton btnListar = new JButton("Listar");
+		btnListar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Integer idMotorista = Integer.parseInt(edtIdMotorista.getText());
+					atualizarTabela(idMotorista);
+				} catch (Exception e2) {
+				}				
+				
+			}
+		});
+		btnListar.setBounds(192, 14, 89, 23);
+		contentPane.add(btnListar);
 	}
-    
-    public void mostrarTela(int idDaTransportadora) {
-		this.setVisible(true);
-		this.idDaTransportadora = idDaTransportadora;
-	}
+	
+	private void atualizarTabela(Integer idMotorista) {
+		List<Entrega> entregas = entregaService.listarPor(idMotorista);
+		entregaTableModel = new EntregaTableModel(entregas);
+        tableEntrega.setModel(entregaTableModel);
+    }
+	
 }

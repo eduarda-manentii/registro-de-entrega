@@ -2,7 +2,8 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,70 +12,86 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ViewPrincipal extends JFrame implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
+import com.google.common.base.Preconditions;
 
-	private JPanel contentPane;
+import br.com.senai.saep.entity.Motorista;
+import br.com.senai.saep.entity.Transportadora;
+import br.com.senai.saep.service.MotoristaService;
+
+@Component
+@Lazy
+public class ViewPrincipal extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;	
+
+private  String nomeTransportadora; 	
 	
-	private int idDaTransportadora;
+	@Autowired
+	private ViewListagemMotorista viewMotorista;
 	
-	@Autowired @Lazy
-	private ViewListagemMotorista viewListagemMotorista;
+	@Autowired
+	private ViewListagemEntregas viewEntregas;
 	
-	@Autowired @Lazy
-	private ViewListagemEntregas viewListagemEntrega;
+	@Autowired
+	private Transportadora transportadora;
 	
+	@Autowired
+	private MotoristaService motoristaService;
+	
+	private List<Motorista> motoristas = new ArrayList<Motorista>();
+	
+	public void pegarTransportadora(Transportadora transportadora) {
+		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+		this.nomeTransportadora = transportadora.getNome().toUpperCase();
+		this.transportadora = transportadora;
+		setTitle(nomeTransportadora);
+		motoristas = null;
+		setVisible(true);
+	}
+
 	public ViewPrincipal() {
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
-		setTitle("Gestor de Cardápios - Meu Senai - v1.0.0");
+			
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		System.out.println(this.nomeTransportadora);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 784, 22);
-		contentPane.add(menuBar);
+		setJMenuBar(menuBar);
 		
 		JMenu mnNewMenu = new JMenu("Cadastros");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Motorista");
-		mntmNewMenuItem.addActionListener(new ActionListener() {
+		JMenuItem btnMotorista = new JMenuItem("Motorista");
+		btnMotorista.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				viewListagemMotorista.mostrarTela(idDaTransportadora);
-			}
-		});
-		mnNewMenu.add(mntmNewMenuItem);
-		
-		JMenuItem miRestaurante = new JMenuItem("Entregas");
-		miRestaurante.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				viewListagemEntrega.mostrarTela(idDaTransportadora);
-			}
-		});
-		mnNewMenu.add(miRestaurante);
-		
-		JMenuItem mnitSair = new JMenuItem("Sair");
-		mnitSair.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+				viewMotorista.pegarTransportadora(transportadora);				
 				dispose();
 			}
 		});
-		menuBar.add(mnitSair);
-		this.setLocationRelativeTo(null);
+		mnNewMenu.add(btnMotorista);
+		
+		JMenuItem btnEntrega = new JMenuItem("Entrega");
+		btnEntrega.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				motoristas = motoristaService.listarPor(transportadora.getId());
+				System.out.println(motoristas);
+				viewEntregas.pegarTransportadora(transportadora, motoristas);
+				dispose();
+			}
+		});
+		mnNewMenu.add(btnEntrega);
+		
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		setLocationRelativeTo(null);
 	}
 	
-	public void mostrarTela(int idDaTransportadora) {
-		this.setVisible(true);
-		this.idDaTransportadora = idDaTransportadora;
-	}
 }

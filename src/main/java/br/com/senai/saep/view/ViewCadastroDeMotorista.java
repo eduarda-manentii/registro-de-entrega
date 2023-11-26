@@ -2,6 +2,8 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,110 +17,125 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
+
 import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.MotoristaService;
-import br.com.senai.saep.service.TransportadoraService;
 
 @Component
+@Lazy
 public class ViewCadastroDeMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JFrame frame;
-	private JTextField txtNome;
-	private JTextField txtCnh;
 	private JPanel contentPane;
+	private JTextField edtNome;
+	private JTextField edtCnh;	
 	
-	@Autowired
-	private TransportadoraService serviceTransportadora;
+	private Transportadora transportadora;
 	
-	@Lazy
-	@Autowired 
-	private ViewListagemMotorista view;
+	private String nomeTransportadora;
 	
 	@Autowired
 	private MotoristaService service;
 	
-	private int idDaTransportadora;
+	@Autowired
+	private ViewLogin viewLogin;
 	
-    private boolean modoVisualizacao = false;
+	@Autowired
+	private ViewListagemMotorista viewCadastro;
+	
+	@Autowired
+	private MotoristaService motoristaService;
+	
+	public void pegarTransportadora(Transportadora transportadora) {
+		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+		this.nomeTransportadora = transportadora.getNome().toUpperCase();
+		this.transportadora = transportadora;
+		setTitle(nomeTransportadora);				
+	}
 	
 	public ViewCadastroDeMotorista() {
-		frame = new JFrame();
-		setBounds(100, 100, 400, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 468, 254);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setLocationRelativeTo(null);
 		
-		JLabel lblNome = new JLabel("Nome");
-		lblNome.setBounds(32, 56, 46, 14);
-		contentPane.add(lblNome);
-		
-		txtNome = new JTextField();
-		txtNome.setColumns(10);
-		txtNome.setBounds(32, 75, 269, 25);
+		JLabel txtNome = new JLabel("Nome:");
+		txtNome.setBounds(50, 76, 46, 14);
 		contentPane.add(txtNome);
 		
-		txtCnh = new JTextField();
-		txtCnh.setColumns(10);
-		txtCnh.setBounds(32, 147, 269, 25);
+		edtNome = new JTextField();
+		edtNome.setBounds(106, 73, 252, 20);
+		contentPane.add(edtNome);
+		edtNome.setColumns(10);
+		
+		JLabel txtCnh = new JLabel("CNH:");
+		txtCnh.setBounds(50, 119, 46, 14);
 		contentPane.add(txtCnh);
 		
-		JLabel lblCnh = new JLabel("CNH");
-		lblCnh.setBounds(32, 132, 46, 14);
-		contentPane.add(lblCnh);
+		edtCnh = new JTextField();
+		edtCnh.setColumns(10);
+		edtCnh.setBounds(106, 116, 252, 20);
+		contentPane.add(edtCnh);
 		
-		JButton btnSalvar = new JButton("Salvar");
-		btnSalvar.addActionListener(new ActionListener() {
+		JButton btnInserir = new JButton("Inserir");
+		btnInserir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String nome = txtNome.getText();
-				String cnh = txtCnh.getText();
-				
-				if(!modoVisualizacao) {
-					if (nome == null || cnh == null) {
-						JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
-					} else {
-						Motorista motorista = new Motorista();
+					
+				try {
+					String nome = edtNome.getText();
+					String cnh = edtCnh.getText();
+					
+					Motorista motorista = new Motorista();
+					
+					if (motorista != null) {
 						motorista.setNomeCompleto(nome);
 						motorista.setCnh(cnh);
-						Transportadora transportadoraEncontrada = serviceTransportadora.buscarPor(idDaTransportadora);
-						motorista.setTransportadora(transportadoraEncontrada);
 						
-						Motorista motoristaCadastrado = service.salvar(motorista);
-						if (motoristaCadastrado != null) {
-							JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
-						}
-					}
-				}
+						motorista.setTransportadora(transportadora);
+												
+						motorista = service.salvar(motorista);
+						JOptionPane.showInternalMessageDialog(null, "Motorista salvo com sucesso!");
+						edtNome.setText("");
+						edtCnh.setText("");
+					}					
+					
+				} catch (Exception e2) {
+					JOptionPane.showInternalMessageDialog(null, "Erro ao tentar salvar o Motorista");
+				}				
+				
 			}
 		});
-		btnSalvar.setBounds(112, 204, 112, 25);
-		contentPane.add(btnSalvar);
+		btnInserir.setBounds(143, 173, 89, 23);
+		contentPane.add(btnInserir);
 		
-		JButton btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
+		JLabel txtTitulo = new JLabel("CADASTRO DE MOTORISTA");
+		txtTitulo.setBounds(126, 28, 146, 14);
+		contentPane.add(txtTitulo);
+		
+		JButton btnSair = new JButton("Logout");
+		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.mostrarTela(idDaTransportadora);
+				viewLogin.setVisible(true);
 				dispose();
 			}
 		});
-		btnConsultar.setBounds(248, 21, 112, 25);
-		contentPane.add(btnConsultar);
+		btnSair.setBounds(326, 11, 89, 23);
+		contentPane.add(btnSair);
 		
-		this.setLocationRelativeTo(null);
+		JButton btnVisualizar = new JButton("Visualizar");
+		btnVisualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewCadastro.pegarTransportadora(transportadora);
+				dispose();			}
+		});
+		btnVisualizar.setBounds(242, 173, 89, 23);
+		contentPane.add(btnVisualizar);
 	}
-	
-	public void mostrarTela(int idDaTransportadora) {
-		this.setVisible(true);
-		this.idDaTransportadora = idDaTransportadora;
-	}
-	
-	public void setMotorista(Motorista motorista) {
-		this.txtNome.setText(motorista.getNomeCompleto());
-		this.txtCnh.setText(motorista.getCnh());
-	}
-	
-	
 }

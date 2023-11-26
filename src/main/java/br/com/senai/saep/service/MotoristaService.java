@@ -26,8 +26,8 @@ public class MotoristaService {
 		return repository.save(motorista);
 	}
 	
-	 public List<Motorista> buscarPorTransportadora(Integer idDaTransportadora) {
-		 return (List<Motorista>) repository.buscarPorTransportadora(idDaTransportadora);
+	 public List<Motorista> listarPor(Integer idDaTransportadora) {
+		 return (List<Motorista>) repository.listarPor(idDaTransportadora);
     }
 	 
 	 public List<Motorista> listarPorNome(Integer idDaTransportadora, String nome) {
