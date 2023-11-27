@@ -20,7 +20,7 @@ public interface MotoristasRepository extends JpaRepository<Motorista, Integer> 
 	  		+ "FROM Motorista m "
 	  		+ "WHERE m.transportadora.id = :idDaTransportadora "
 	  		+ "AND m.nomeCompleto = :nomeCompleto")
-	    List<Motorista> ListarPorNome(Integer idDaTransportadora, String nomeCompleto);
+	    List<Motorista> listarPorNome(Integer idDaTransportadora, String nomeCompleto);
 	  
 	  @Query(value = "SELECT m "
 	  		+ "FROM Motorista m "

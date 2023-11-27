@@ -29,7 +29,7 @@ public class ViewPrincipal extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;	
 
-private  String nomeTransportadora; 	
+	private  String nomeTransportadora; 	
 	
 	@Autowired
 	private ViewListagemMotorista viewMotorista;
@@ -61,7 +61,6 @@ private  String nomeTransportadora;
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		System.out.println(this.nomeTransportadora);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -82,7 +81,6 @@ private  String nomeTransportadora;
 		btnEntrega.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				motoristas = motoristaService.listarPor(transportadora.getId());
-				System.out.println(motoristas);
 				viewEntregas.pegarTransportadora(transportadora, motoristas);
 				dispose();
 			}

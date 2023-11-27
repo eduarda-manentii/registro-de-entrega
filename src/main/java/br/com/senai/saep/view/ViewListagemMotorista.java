@@ -29,25 +29,23 @@ public class ViewListagemMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;	
-
 	private  String nomeTransportadora; 	
+	private JTable tabelaMotoristas;
+	private MotoristaTableModel modeloTabela;
 	
 	@Autowired
 	private ViewCadastroDeMotorista viewCadastroMotorista;
 	
 	@Autowired
-	private Transportadora transportadora;	
-
-	@Autowired
 	private ViewLogin viewLogin;
 	
-	private JTable tabelaMotoristas;
-    private MotoristaTableModel modeloTabela;
-    
+	@Autowired
+	private Transportadora transportadora;	
+
     @Autowired
     private MotoristaService motoristaService;
     
-	public void pegarTransportadora(Transportadora transportadora) {
+	void pegarTransportadora(Transportadora transportadora) {
 		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
 		this.nomeTransportadora = transportadora.getNome().toUpperCase();
 		this.transportadora = transportadora;
@@ -55,21 +53,19 @@ public class ViewListagemMotorista extends JFrame {
 		setVisible(true);
 		atualizarTabela();
 	}
-
+	
     public ViewListagemMotorista() {
         setResizable(false);
-
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 570, 300);
+        setBounds(100, 100, 454, 300);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
         setContentPane(contentPane);
 
         modeloTabela = new MotoristaTableModel();
         tabelaMotoristas = new JTable(modeloTabela);
         JScrollPane scrollPane = new JScrollPane(tabelaMotoristas);
-        scrollPane.setBounds(10, 32, 414, 180);
+        scrollPane.setBounds(10, 45, 419, 167);
         contentPane.add(scrollPane);
 
         JButton btnCadastrarMotorista = new JButton("Cadastrar Motorista");
@@ -92,7 +88,7 @@ public class ViewListagemMotorista extends JFrame {
                 dispose();
             }
         });
-        btnSair.setBounds(430, 0, 89, 23);
+        btnSair.setBounds(340, 11, 89, 23);
         contentPane.add(btnSair);
         
         JButton btnVisualizar = new JButton("Visualizar");
@@ -101,7 +97,7 @@ public class ViewListagemMotorista extends JFrame {
         		JOptionPane.showMessageDialog(contentPane, "Funcionalidade não específicada.");
         	}
         });
-        btnVisualizar.setBounds(170, 227, 111, 23);
+        btnVisualizar.setBounds(177, 227, 145, 23);
         contentPane.add(btnVisualizar);
         
         JButton btnExcluir = new JButton("Excluir");
@@ -127,7 +123,7 @@ public class ViewListagemMotorista extends JFrame {
 				}
         	}
         });
-        btnExcluir.setBounds(284, 227, 117, 23);
+        btnExcluir.setBounds(326, 227, 103, 23);
         contentPane.add(btnExcluir);
     }
 

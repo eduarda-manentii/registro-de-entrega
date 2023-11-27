@@ -10,8 +10,6 @@ import com.google.common.base.Preconditions;
 
 import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.repository.MotoristasRepository;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 
 @Service @Validated
 public class MotoristaService {
@@ -19,10 +17,7 @@ public class MotoristaService {
 	@Autowired
 	private MotoristasRepository repository;
 	
-	public Motorista salvar(
-			@Valid
-			@NotNull(message = "O motorista é obrigatório")
-			Motorista motorista) {
+	public Motorista salvar(Motorista motorista) {
 		return repository.save(motorista);
 	}
 	
@@ -31,13 +26,10 @@ public class MotoristaService {
     }
 	 
 	 public List<Motorista> listarPorNome(Integer idDaTransportadora, String nome) {
-		 return (List<Motorista>) repository.ListarPorNome(idDaTransportadora, "%" + nome + "%");
+		 return (List<Motorista>) repository.listarPorNome(idDaTransportadora, "%" + nome + "%");
     }
 	 
-	public void excluirPor(	@NotNull(message = "O id da transportadora é obrigatório")
-			Integer idDaTransportadora,
-			@NotNull(message = "O id do motorista é obrigatória")
-			Integer idDoMotorista) {
+	public void excluirPor(Integer idDaTransportadora, Integer idDoMotorista) {
 		Motorista motoristaEncontrado = repository.buscarPor(idDaTransportadora, idDoMotorista);
 		Preconditions.checkNotNull(motoristaEncontrado, 
 				"Não foi encontrado motorista com o id informado.");

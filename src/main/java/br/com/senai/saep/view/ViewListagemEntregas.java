@@ -2,15 +2,15 @@ package br.com.senai.saep.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,57 +31,53 @@ public class ViewListagemEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-
-	private  String nomeTransportadora; 	
+	private JTable tableEntrega;
+	private List<Motorista> motoristas;
+	private EntregaTableModel entregaTableModel;
+	private  String nomeTransportadora; 
 	
 	@Autowired @Lazy
 	private ViewCadastroDeEntregas viewCadastroEntregas;
+	
+	@Autowired
+	private ViewLogin viewLogin;
 		
 	@Autowired
 	private Transportadora transportadora;
 	
 	@Autowired
-	private ViewLogin viewLogin;
-	
-	@Autowired
     private EntregaService entregaService;
 	
-	private List<Motorista> motoristas;
-	
-	private JTable tableEntrega;
-	private EntregaTableModel entregaTableModel;
-	private JTextField edtIdMotorista;
-	
 	public void pegarTransportadora(Transportadora transportadora, List<Motorista> motoristas) {
-		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
-		this.nomeTransportadora = transportadora.getNome().toUpperCase();
-		this.transportadora = transportadora;
-		this.motoristas = motoristas;
-		setTitle(nomeTransportadora);
-		this.setVisible(true);
+	    Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
+	    this.nomeTransportadora = transportadora.getNome().toUpperCase();
+	    this.motoristas = motoristas;
+	    this.transportadora = transportadora;
+	    setTitle(nomeTransportadora);
+	    setVisible(true);
+	    atualizarTabela();
 	}
-	
+
 	public ViewListagemEntregas() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 506, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
 		entregaTableModel = new EntregaTableModel();
 		tableEntrega = new JTable(entregaTableModel);
 		JScrollPane scrollPane = new JScrollPane(tableEntrega);
-		scrollPane.setBounds(10, 43, 330, 165);
+		scrollPane.setBounds(10, 43, 470, 165);
 		contentPane.add(scrollPane);
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
-		System.out.println("os motoristas chegaram aqui? " + motoristas);
+
 		JButton btnCadastroEntregas = new JButton("Cadastrar Entregas");
 		btnCadastroEntregas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				viewCadastroEntregas.pegarTransportadora(transportadora, motoristas);
 				dispose();
 			}
@@ -96,37 +92,33 @@ public class ViewListagemEntregas extends JFrame {
 				dispose();
 			}
 		});
-		btnSair.setBounds(345, 0, 89, 23);
-		contentPane.add(btnSair);		
+		btnSair.setBounds(391, 14, 89, 23);
+		contentPane.add(btnSair);
 		
-		JLabel lblNewLabel = new JLabel("Id motorista: ");
-		lblNewLabel.setBounds(10, 18, 76, 14);
-		contentPane.add(lblNewLabel);
-		
-		edtIdMotorista = new JTextField();
-		edtIdMotorista.setBounds(96, 15, 86, 20);
-		contentPane.add(edtIdMotorista);
-		edtIdMotorista.setColumns(10);
-		
-		JButton btnListar = new JButton("Listar");
-		btnListar.addActionListener(new ActionListener() {
+		JButton btnVisualizar = new JButton("Visualizar");
+		btnVisualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Integer idMotorista = Integer.parseInt(edtIdMotorista.getText());
-					atualizarTabela(idMotorista);
-				} catch (Exception e2) {
-				}				
-				
+				JOptionPane.showMessageDialog(contentPane, "Funcionalidade não específicada.");
 			}
 		});
-		btnListar.setBounds(192, 14, 89, 23);
-		contentPane.add(btnListar);
+		btnVisualizar.setBounds(194, 227, 146, 23);
+		contentPane.add(btnVisualizar);
 	}
 	
-	private void atualizarTabela(Integer idMotorista) {
-		List<Entrega> entregas = entregaService.listarPor(idMotorista);
-		entregaTableModel = new EntregaTableModel(entregas);
-        tableEntrega.setModel(entregaTableModel);
-    }
+	  private void atualizarTabela() {
+		  entregaTableModel = new EntregaTableModel(obterDadosFicticios());
+	        tableEntrega.setModel(entregaTableModel);
+	    }
+	  
+	  private List<Entrega> obterDadosFicticios() {
+		    List<Entrega> entregas = new ArrayList<>();
+		    for (Motorista motorista : motoristas) {
+		        entregas.addAll(entregaService.listarPor(motorista.getId()));
+		    }
+		    return entregas;
+		}
+
+
+	   
 	
 }

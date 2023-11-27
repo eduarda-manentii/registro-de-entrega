@@ -21,5 +21,5 @@ public interface EntregasRepository extends JpaRepository<Entrega, Integer>  {
 				+ "FROM Entrega e "
 				+ "WHERE e.motorista.id = :id")
 		public List<Entrega> listarPor(Integer id);
-
+	  
 }
