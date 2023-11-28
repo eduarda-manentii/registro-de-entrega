@@ -18,11 +18,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.TransportadoraService;
-import org.springframework.context.annotation.Lazy;
 
 
 @Component
-@Lazy
 public class ViewLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;

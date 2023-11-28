@@ -26,7 +26,6 @@ import br.com.senai.saep.service.EntregaService;
 import br.com.senai.saep.view.componentes.table.EntregaTableModel;
 
 @Component
-@Lazy
 public class ViewListagemEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -36,10 +35,12 @@ public class ViewListagemEntregas extends JFrame {
 	private EntregaTableModel entregaTableModel;
 	private  String nomeTransportadora; 
 	
-	@Autowired @Lazy
+	@Autowired 
+	@Lazy
 	private ViewCadastroDeEntregas viewCadastroEntregas;
 	
 	@Autowired
+	@Lazy
 	private ViewLogin viewLogin;
 		
 	@Autowired

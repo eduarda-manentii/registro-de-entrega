@@ -24,7 +24,6 @@ import br.com.senai.saep.service.MotoristaService;
 import br.com.senai.saep.view.componentes.table.MotoristaTableModel;
 
 @Component
-@Lazy
 public class ViewListagemMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -34,9 +33,11 @@ public class ViewListagemMotorista extends JFrame {
 	private MotoristaTableModel modeloTabela;
 	
 	@Autowired
+	@Lazy
 	private ViewCadastroDeMotorista viewCadastroMotorista;
 	
 	@Autowired
+	@Lazy
 	private ViewLogin viewLogin;
 	
 	@Autowired

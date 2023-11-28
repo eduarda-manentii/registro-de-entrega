@@ -24,15 +24,14 @@ import br.com.senai.saep.entity.Motorista;
 import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.EntregaService;
 import jakarta.annotation.PostConstruct;
+import javax.swing.DefaultComboBoxModel;
 
 @Component
-@Lazy
 public class ViewCadastroDeEntregas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField edtDescricao;
-	private JComboBox<Motorista> cbMotoristas;
 	private List<Motorista> motoristas;
 	private String nomeTransportadora; 
 
@@ -44,19 +43,20 @@ public class ViewCadastroDeEntregas extends JFrame {
 
 	@Autowired
 	private ViewListagemEntregas viewEntrega;
-	
-	@Autowired
+		
 	private Transportadora transportadora;
+	
+	private JComboBox<Motorista> cbMotoristas;
 
 	public void pegarTransportadora(Transportadora transportadora, List<Motorista> motoristas) {
 		Preconditions.checkNotNull(transportadora, "A transportadora não pode ser nula");
 		this.nomeTransportadora = transportadora.getNome().toUpperCase();
-		this.motoristas = motoristas;
+		this.motoristas = motoristas;				
+		this.carregarCombo();		
 		this.transportadora = transportadora;
 		setTitle(nomeTransportadora);		
 		setVisible(true);
-		this.carregarCombo();
-	}
+	}	
 
 	@PostConstruct
 	public void carregarCombo() {
@@ -85,10 +85,6 @@ public class ViewCadastroDeEntregas extends JFrame {
 		JLabel txtMotoristas = new JLabel("Motoristas");
 		txtMotoristas.setBounds(10, 62, 68, 14);
 		contentPane.add(txtMotoristas);
-
-		cbMotoristas = new JComboBox<Motorista>();
-		cbMotoristas.setBounds(78, 58, 277, 22);
-		contentPane.add(cbMotoristas);
 
 		edtDescricao = new JTextField();
 		edtDescricao.setBounds(78, 121, 277, 60);
@@ -150,7 +146,9 @@ public class ViewCadastroDeEntregas extends JFrame {
 		});
 		btnListar.setBounds(335, 227, 89, 23);
 		contentPane.add(btnListar);
-		this.carregarCombo();
+		
+		cbMotoristas = new JComboBox<Motorista>();
+		cbMotoristas.setBounds(78, 58, 277, 22);
+		contentPane.add(cbMotoristas);
 	}
-
 }

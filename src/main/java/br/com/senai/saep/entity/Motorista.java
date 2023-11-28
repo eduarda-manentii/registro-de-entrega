@@ -24,6 +24,7 @@ public class Motorista {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
     @Column(name = "id")
 	private Integer id;
 	

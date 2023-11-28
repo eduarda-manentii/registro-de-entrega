@@ -11,7 +11,7 @@ public class EntregaTableModel extends AbstractTableModel {
 	
 private static final long serialVersionUID = 1L;
 	
-	private final int QTDE_COLUNAS = 3;
+	private final int QTDE_COLUNAS = 2;
 	
 	private List<Entrega> entregas;
 
@@ -42,8 +42,6 @@ private static final long serialVersionUID = 1L;
 			return "ID";
 		}else if (column == 1) {
 			return "Descricao";
-		}else if (column == 2) {
-			return "Motorista";
 		}
 		throw new IllegalArgumentException("Indíce inválido");
 	}
@@ -54,8 +52,6 @@ private static final long serialVersionUID = 1L;
 			return entregas.get(rowIndex).getId();
 		}else if (columnIndex == 1) {
 			return entregas.get(rowIndex).getDescricao();
-		}else if (columnIndex == 2) {
-			return entregas.get(rowIndex).getMotorista().getNomeCompleto();
 		}
 		throw new IllegalArgumentException("Índice inválido");
 	}

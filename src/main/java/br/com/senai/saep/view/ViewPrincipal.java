@@ -23,7 +23,6 @@ import br.com.senai.saep.entity.Transportadora;
 import br.com.senai.saep.service.MotoristaService;
 
 @Component
-@Lazy
 public class ViewPrincipal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
